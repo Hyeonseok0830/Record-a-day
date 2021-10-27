@@ -1,5 +1,6 @@
 package com.example.record_a_day
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
@@ -30,10 +31,13 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         Glide.with(this).load(R.drawable.logo).override(256,256).into(binding.loginLogo)
         binding.loginBtn.setOnClickListener {
-            login_conditionRef.setValue(binding.loginId.text.toString())
-            pw_conditionRef.setValue(binding.loginPw.text.toString())
+            //login_conditionRef.setValue(binding.loginId.text.toString())
+            //pw_conditionRef.setValue(binding.loginPw.text.toString())
+            var intent  = Intent(this,MainActivity::class.java)
+            startActivity(intent)
         }
     }
+
 
     override fun onStart() {
         super.onStart()
