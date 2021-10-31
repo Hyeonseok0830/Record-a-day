@@ -8,6 +8,7 @@ import android.text.Editable
 import android.text.InputFilter
 import android.text.Spanned
 import android.text.TextWatcher
+import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -17,9 +18,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
 import org.w3c.dom.Text
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import javax.crypto.Cipher
+import javax.crypto.spec.SecretKeySpec
 import kotlin.math.log
 
 class JoinActivity : AppCompatActivity() {
@@ -27,10 +31,14 @@ class JoinActivity : AppCompatActivity() {
     private var mBinding: ActivityJoinBinding? = null
 
     private val binding get() = mBinding!!
-    //Firebase Test
-    private var mRootRef = FirebaseDatabase.getInstance().getReference()
-    private var user_conditionRef = mRootRef.child("user")
+    //firestore 객체
+    val firestore = FirebaseFirestore.getInstance()
+
     private val TAG = "TESTTEST"
+
+    companion object {
+        const val SECRET_KEY = "ABCDEFGH12345678"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityJoinBinding.inflate(layoutInflater)
@@ -42,8 +50,6 @@ class JoinActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 //8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요.
-                Log.d(TAG, "onTextChanged:1 "+textValidate(s.toString()))
-                Log.d(TAG, "onTextChanged:2 "+s.toString())
                 if(s?.length!!>=8&&s.length<=16) {
                     if(!textValidate(s.toString())){
                         binding.passInfo.visibility = View.GONE
@@ -105,26 +111,29 @@ class JoinActivity : AppCompatActivity() {
         }
         //회원 가입 버튼
         binding.joinBtn.setOnClickListener {
+            val encrypt_pass = binding.joinPw.text.toString().encryptECB()
             var user = mutableMapOf(
                 "name" to binding.joinName.text.toString(),
                 "id" to binding.joinId.text.toString(),
-                "pw" to binding.joinPw.text.toString(),
+                "pw" to encrypt_pass,
                 "birth" to "${binding.joinYear.text}${binding.joinMonth.text}${binding.joinDay.text}",
                 "phone" to binding.ctnInput.text.toString()
             )
-            user_conditionRef.setValue(user)
-            //user_conditionRef.setValue(binding.loginId.text.toString())
-            //pw_conditionRef.setValue(binding.loginPw.text.toString())
+            firestore.collection("user")
+                .add(user)
+                .addOnSuccessListener {
+                    Log.d(TAG, "onCreate: Success add user info")
+                }
+                .addOnFailureListener {
+                    Log.d(TAG, "onCreate: Fail add user info")
+
+                }
+            finish()
         }
     }
     override fun onStart() {
         super.onStart()
-        user_conditionRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-            }
-            override fun onCancelled(error: DatabaseError) {
-            }
-        })
+
     }
     override fun onDestroy() {
 
@@ -137,10 +146,15 @@ class JoinActivity : AppCompatActivity() {
         var matcher = pattern.matcher(str)
         return matcher.matches()
     }
-    fun textValidate2(str :String?):Boolean{
-        val Password_PATTERN = "^[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|]*$"
-        var pattern  = Pattern.compile(Password_PATTERN)
-        var matcher = pattern.matcher(str)
-        return matcher.matches()
+    /**
+     * ECB 암호화
+     */
+    private fun String.encryptECB(): String{
+        val keySpec = SecretKeySpec(SECRET_KEY.toByteArray(), "AES")    /// 키
+        val cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING")     //싸이퍼
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec)       // 암호화/복호화 모드
+        val ciphertext = cipher.doFinal(this.toByteArray())
+        val encodedByte = Base64.encode(ciphertext, Base64.DEFAULT)
+        return String(encodedByte)
     }
 }
