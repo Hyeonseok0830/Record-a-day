@@ -13,7 +13,9 @@
         android:hint="이름"
         android:singleLine="true"
         android:textSize="15dp"
+        android:maxLength="15"
         android:layout_marginVertical="10dp"
+        android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@id/join_id"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -24,6 +26,7 @@
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:hint="아이디"
+        android:maxLength="20"
         android:singleLine="true"
         android:textSize="15dp"
         android:layout_marginVertical="10dp"
@@ -47,7 +50,20 @@
         app:layout_constraintBottom_toTopOf="@id/join_pw_c"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
-
+    <TextView
+        android:id="@+id/pass_info"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="8~16자 영문 대 소문자, 숫자, 특수문자를 사용하세요."
+        android:textSize="12dp"
+        android:textColor="@color/red"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/join_pw"
+        app:layout_constraintBottom_toTopOf="@id/join_pw_c" />
     <EditText
         android:id="@+id/join_pw_c"
         android:layout_width="300dp"
@@ -62,6 +78,20 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:id="@+id/pass_c_info"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:text="비밀번호가 일치하지 않습니다."
+        android:textSize="12dp"
+        android:textColor="@color/red"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/join_pw_c"
+        app:layout_constraintBottom_toTopOf="@id/year_layout" />
 
     <LinearLayout
         android:id="@+id/year_layout"
@@ -71,7 +101,7 @@
         android:layout_marginVertical="10dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/join_pw_c">
+        app:layout_constraintTop_toBottomOf="@id/pass_c_info">
 
         <EditText
             android:id="@+id/join_year"
@@ -79,6 +109,7 @@
             android:layout_height="wrap_content"
             android:hint="태어난 년도"
             android:inputType="number"
+            android:maxLength="4"
             android:textSize="15dp" />
 
         <EditText
@@ -86,6 +117,7 @@
             android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="15dp"
+            android:maxLength="2"
             android:hint="월"
             android:textSize="15dp" />
 
@@ -93,6 +125,7 @@
             android:id="@+id/join_day"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
+            android:maxLength="2"
             android:hint="일"
             android:inputType="number"
             android:textSize="15dp" />
