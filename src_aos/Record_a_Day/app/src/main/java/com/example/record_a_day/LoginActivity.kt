@@ -29,6 +29,8 @@ class LoginActivity : AppCompatActivity() {
 
     private val TAG = "TESTTEST"
 
+    private val app_mode = "DEBUG" // 메인 화면 진입
+    //private val app_mode = "COMM"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,23 +39,34 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
         Glide.with(this).load(R.drawable.logo).override(256, 256).into(binding.loginLogo)
         binding.loginBtn.setOnClickListener {
-            firestore.collection("user")
-                .whereEqualTo("id", binding.loginId.text.toString())
-                .get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        if (document.data["pw"] == binding.loginPw.text.toString().encryptECB()) {
-                            var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            startActivity(intent)
-                        } else {
-                            Toast.makeText(this@LoginActivity, "비밀번호가 일치하지 않습니다.", Toast.LENGTH_LONG).show()
-                        }
+            if(app_mode.equals("DEBUG")){
+                var intent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(intent)
+            } else {
+                firestore.collection("user")
+                    .whereEqualTo("id", binding.loginId.text.toString())
+                    .get()
+                    .addOnSuccessListener { documents ->
+                        for (document in documents) {
+                            if (document.data["pw"] == binding.loginPw.text.toString()
+                                    .encryptECB()
+                            ) {
+                                var intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                startActivity(intent)
+                            } else {
+                                Toast.makeText(
+                                    this@LoginActivity,
+                                    "비밀번호가 일치하지 않습니다.",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
 
+                        }
                     }
-                }
-                .addOnFailureListener { exception ->
-                    Log.w(TAG, "Error getting documents: ", exception)
-                }
+                    .addOnFailureListener { exception ->
+                        Log.w(TAG, "Error getting documents: ", exception)
+                    }
+            }
 
         }
         //회원가입 버튼 밑줄 처리
