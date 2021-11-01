@@ -16,10 +16,12 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        init()
 
     }
+    fun init(){
 
+    }
     override fun onDestroy() {
 
         mBinding = null
