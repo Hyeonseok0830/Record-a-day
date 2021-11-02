@@ -8,12 +8,63 @@
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/my_info_btn"
+        android:id="@+id/myinfo_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignTop="@+id/more_btn"
+        android:layout_alignBottom="@+id/more_btn"
+        android:layout_alignParentLeft="true"
+        android:layout_marginVertical="50dp"
+        android:layout_marginHorizontal="40dp"
         android:clickable="true"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/main_control_button" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/record_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/more_btn"
+        android:layout_alignParentLeft="true"
+        android:layout_marginVertical="120dp"
+        android:layout_marginHorizontal="90dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/main_control_button" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/task_list_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/more_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginVertical="190dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/main_control_button" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/goal_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/more_btn"
+        android:layout_alignParentRight="true"
+        android:layout_marginVertical="120dp"
+        android:layout_marginHorizontal="90dp"
+        android:clickable="true"
+        android:visibility="invisible"
+        app:srcCompat="@drawable/main_control_button" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/share_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/more_btn"
+        android:layout_alignParentRight="true"
+        android:layout_marginVertical="50dp"
+        android:layout_marginHorizontal="40dp"
+        android:clickable="true"
+        android:visibility="invisible"
         app:srcCompat="@drawable/main_control_button" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
