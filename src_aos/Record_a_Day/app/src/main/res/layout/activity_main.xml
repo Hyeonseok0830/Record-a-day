@@ -17,7 +17,7 @@
         android:layout_marginHorizontal="40dp"
         android:clickable="true"
         android:visibility="invisible"
-        app:srcCompat="@drawable/main_control_button" />
+        app:srcCompat="@drawable/icon_myinfo" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/record_btn"
@@ -29,7 +29,7 @@
         android:layout_marginHorizontal="90dp"
         android:clickable="true"
         android:visibility="invisible"
-        app:srcCompat="@drawable/main_control_button" />
+        app:srcCompat="@drawable/icon_record" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/task_list_btn"
@@ -41,7 +41,7 @@
         android:layout_marginVertical="190dp"
         android:clickable="true"
         android:visibility="invisible"
-        app:srcCompat="@drawable/main_control_button" />
+        app:srcCompat="@drawable/icon_tasklist" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/goal_btn"
@@ -53,7 +53,7 @@
         android:layout_marginHorizontal="90dp"
         android:clickable="true"
         android:visibility="invisible"
-        app:srcCompat="@drawable/main_control_button" />
+        app:srcCompat="@drawable/icon_goal" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/share_btn"
@@ -65,7 +65,7 @@
         android:layout_marginHorizontal="40dp"
         android:clickable="true"
         android:visibility="invisible"
-        app:srcCompat="@drawable/main_control_button" />
+        app:srcCompat="@drawable/icon_share" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/more_btn"
@@ -75,5 +75,11 @@
         android:layout_alignParentBottom="true"
         android:layout_marginVertical="30dp"
         android:clickable="true"
-        app:srcCompat="@drawable/main_control_button" />
+        app:srcCompat="@drawable/icon_menu" />
 </RelativeLayout>
+<!--<a href="https://www.streamlinehq.com">Free Interface User Single PNG icon by Streamline</a>-->
+<!--<a href="https://www.streamlinehq.com">Free Interface Edit Write 1 PNG icon by Streamline</a>-->
+<!--<a href="https://www.streamlinehq.com">Free Interface Text Formatting List Bullets PNG icon by Streamline</a>-->
+<!--<a href="https://www.streamlinehq.com">Free Interface Favorite Star 2 PNG icon by Streamline</a>-->
+<!--<a href="https://www.streamlinehq.com">Free Interface Validation Check Square 1 PNG icon by Streamline</a>-->
+<!--<a href="https://www.streamlinehq.com">Free Interface Share PNG icon by Streamline</a>-->
