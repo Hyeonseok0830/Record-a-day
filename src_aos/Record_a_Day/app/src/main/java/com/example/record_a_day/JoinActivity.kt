@@ -1,30 +1,31 @@
 package com.example.record_a_day
 
-import android.annotation.SuppressLint
+
+
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
-import android.text.Spanned
+
 import android.text.TextWatcher
 import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.record_a_day.databinding.ActivityJoinBinding
-import com.example.record_a_day.databinding.ActivityMainBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+
+import com.google.firebase.FirebaseException
+import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.*
+
 import com.google.firebase.firestore.FirebaseFirestore
-import org.w3c.dom.Text
-import java.util.regex.Matcher
+import java.util.*
+import java.util.concurrent.TimeUnit
+
 import java.util.regex.Pattern
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
-import kotlin.math.log
+import javax.xml.datatype.DatatypeConstants.SECONDS
 
 class JoinActivity : AppCompatActivity() {
 
@@ -34,15 +35,50 @@ class JoinActivity : AppCompatActivity() {
     //firestore 객체
     val firestore = FirebaseFirestore.getInstance()
 
+    val auth = FirebaseAuth.getInstance()
     private val TAG = "TESTTEST"
 
     companion object {
         const val SECRET_KEY = "ABCDEFGH12345678"
     }
+
+    private var timerTask: Timer? = null
+
+    private var storedVerificationId:String?=null
+    private var resendToken:PhoneAuthProvider.ForceResendingToken?=null
+
+    private val callbacks by lazy{
+        object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
+            override fun onVerificationCompleted(credential: PhoneAuthCredential) {
+                Log.d(TAG, "onVerificationCompleted:$credential")
+            }
+
+            override fun onVerificationFailed(e: FirebaseException) {
+                Log.e(TAG, "onVerificationFailed", e)
+
+                if (e is FirebaseAuthInvalidCredentialsException) {
+                    // Invalid request
+                } else if (e is FirebaseTooManyRequestsException) {
+                    // The SMS quota for the project has been exceeded
+                }
+            }
+
+            override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
+                //super.onCodeSent(verificationId, token)
+                storedVerificationId = verificationId
+                resendToken = token
+                //Log.d(TAG,"verificationId = "+verificationId+", resendToken = "+token.toString())
+            }
+
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = ActivityJoinBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setUI()
+    }
+    fun setUI(){
         //비밀번호 입력
         binding.joinPw.addTextChangedListener(object :TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -80,6 +116,44 @@ class JoinActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
             }
         })
+        //생년월일 입력 필드
+        binding.joinYear.addTextChangedListener(object :TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(s?.length!!>=4){
+                    binding.joinMonth.requestFocus()
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
+        //생년월일 입력 필드
+        binding.joinMonth.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(s?.length!!>=2){
+                    binding.joinDay.requestFocus()
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
+        //생년월일 입력 필드
+        binding.joinDay.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                if(s?.length!!>=2){
+                    binding.ctnInput.requestFocus()
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {
+            }
+        })
 
         //휴대폰 번호 11자리 입력 시 인증번호 받기 버튼 활성화
         binding.ctnInput.addTextChangedListener(object : TextWatcher{
@@ -96,18 +170,57 @@ class JoinActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.joinBtn.isEnabled = s?.length!! >=6
+//                binding.joinBtn.isEnabled = s?.length!! >=6
             }
             override fun afterTextChanged(s: Editable?) {
             }
         })
         //인증 번호 전송 버튼
         binding.ctnPassBtn.setOnClickListener {
+            binding.authTimer.visibility = View.VISIBLE
+            var time = 60
             //인증번호 전송
             val ctn = binding.ctnInput.text.toString()
+            val options = PhoneAuthOptions.newBuilder(auth)
+                .setPhoneNumber("+82$ctn")       // Phone number to verify
+                .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
+                .setActivity(this)                 // Activity (for callback binding)
+                .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
+                .build()
+            PhoneAuthProvider.verifyPhoneNumber(options)
+            if(timerTask!=null){
+                timerTask?.cancel()
+            }
+            timerTask = kotlin.concurrent.timer(period = 1000) {
+                time--
+                val sec = time
 
-            binding.ctnResult.visibility = View.VISIBLE
+                runOnUiThread {
+                    if(sec<15){
+                        binding.authTimer.setTextColor(Color.parseColor("#FF0000"))
+                    }
+                    if(sec<10){
+                        binding.authTimer.text = "00:0$sec"
+                    }else {
+                        binding.authTimer.text = "00:$sec"
+                    }
+                }
+                if(time<=0){
+                    runOnUiThread {
+                        timerTask?.cancel()
+                        binding.authTimer.text = "00:60"
+                        binding.authTimer.setTextColor(Color.parseColor("#FF000000"))
+                        binding.authTimer.visibility = View.GONE
+                    }
+                }
+            }
+            binding.ctnAuthLayout.visibility = View.VISIBLE
             Toast.makeText(this,"인증번호를 전송하였습니다.",Toast.LENGTH_LONG).show()
+        }
+        //인증하기 버튼
+        binding.ctnPassAuthBtn.setOnClickListener {
+            val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, binding.ctnResult.text.toString())
+            signInWithPhoneAuthCredential(credential)
         }
         //회원 가입 버튼
         binding.joinBtn.setOnClickListener {
@@ -156,5 +269,25 @@ class JoinActivity : AppCompatActivity() {
         val ciphertext = cipher.doFinal(this.toByteArray())
         val encodedByte = Base64.encode(ciphertext, Base64.DEFAULT)
         return String(encodedByte)
+    }
+    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+        auth.signInWithCredential(credential)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithCredential:success")
+                    Toast.makeText(this,"인증료 완료",Toast.LENGTH_LONG).show()
+                    binding.joinBtn.isEnabled = true
+                    timerTask?.cancel()
+                } else {
+                    // Sign in failed, display a message and update the UI
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        // The verification code entered was invalid
+                    }
+                    Toast.makeText(this,"인증에 실패하였습니다. 다시 시도해주세요.",Toast.LENGTH_LONG).show()
+                    // Update UI
+                }
+            }
     }
 }
