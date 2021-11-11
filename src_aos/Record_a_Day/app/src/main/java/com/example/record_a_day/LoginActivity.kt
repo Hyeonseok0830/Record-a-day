@@ -6,17 +6,16 @@ import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.util.Base64
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import com.example.record_a_day.data.UserData
+
 import com.example.record_a_day.databinding.ActivityLoginBinding
-import com.example.record_a_day.databinding.ActivityMainBinding
+import com.example.record_a_day.manager.PreferenceManager
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
-import com.google.firebase.database.ValueEventListener as ValueEventListener
 
 class LoginActivity : AppCompatActivity() {
 
@@ -24,6 +23,8 @@ class LoginActivity : AppCompatActivity() {
     private var mBinding: ActivityLoginBinding? = null
     private val binding get() = mBinding!!
 
+    //SharedPref 키 값 - 자동 로그인
+    private val AUTO_LOGIN_KEY = "auto_login"
     //firestore 객체
     val firestore = FirebaseFirestore.getInstance()
 
@@ -37,9 +38,14 @@ class LoginActivity : AppCompatActivity() {
 
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        Glide.with(this).load(R.drawable.logo).override(256, 256).into(binding.loginLogo)
         binding.loginBtn.setOnClickListener {
             if(app_mode.equals("DEBUG")){
+                if(binding.autoLogin.isChecked) {
+                    var id = binding.loginId.text.toString()
+                    PreferenceManager.setString(this,AUTO_LOGIN_KEY,id)
+                } else {
+                    PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
+                }
                 var intent = Intent(this@LoginActivity, MainActivity::class.java)
                 startActivity(intent)
             } else {
@@ -48,9 +54,14 @@ class LoginActivity : AppCompatActivity() {
                     .get()
                     .addOnSuccessListener { documents ->
                         for (document in documents) {
-                            if (document.data["pw"] == binding.loginPw.text.toString()
-                                    .encryptECB()
-                            ) {
+                            if (document.data["pw"] == binding.loginPw.text.toString().encryptECB()) {
+                                if(binding.autoLogin.isChecked) {
+                                    var id = document.data["id"]
+                                    var name = document.data["name"]
+                                    PreferenceManager.setString(this,AUTO_LOGIN_KEY,"$id|$name")
+                                } else {
+                                    PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
+                                }
                                 var intent = Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(intent)
                             } else {
@@ -81,7 +92,18 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        var auto_login = PreferenceManager.getString(this,AUTO_LOGIN_KEY)
+        if(auto_login.isNullOrEmpty()){
+            binding.loginBackground.visibility = View.GONE
+            binding.loginBtn.visibility = View.VISIBLE
+        } else{
+            var intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+        }
+        super.onStart()
 
+    }
 
 
     override fun onDestroy() {

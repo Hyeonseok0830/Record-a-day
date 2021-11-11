@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import com.example.record_a_day.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity() {
 
     private val TAG = "TESTTEST"
 
+    private var backKeyPressedTime = 0L
     lateinit var myInfo_anim : Animation
     lateinit var record_anim : Animation
     lateinit var taskList_anim : Animation
@@ -112,6 +114,20 @@ class MainActivity : AppCompatActivity() {
             }
             show = false
         }
+    }
+
+    override fun onBackPressed() {
+        if(System.currentTimeMillis()>backKeyPressedTime+2000){
+            backKeyPressedTime = System.currentTimeMillis()
+            Toast.makeText(this,"뒤로가기를 한 번 더 누르시면 앱을 종료합니다.",Toast.LENGTH_SHORT).show()
+        } else {
+            AppFinish()
+        }
+    }
+    fun AppFinish(){
+        finish()
+        System.exit(0)
+
     }
     override fun onDestroy() {
 
