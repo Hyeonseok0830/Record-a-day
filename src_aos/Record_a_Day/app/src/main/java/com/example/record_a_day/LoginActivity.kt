@@ -30,6 +30,8 @@ class LoginActivity : AppCompatActivity() {
 
     private val TAG = "TESTTEST"
 
+    private var backKeyPressedTime = 0L
+
     private val app_mode = "DEBUG" // 메인 화면 진입
     //private val app_mode = "COMM"
 
@@ -48,6 +50,7 @@ class LoginActivity : AppCompatActivity() {
                 }
                 var intent = Intent(this@LoginActivity, MainActivity::class.java)
                 startActivity(intent)
+                finish()
             } else {
                 firestore.collection("user")
                     .whereEqualTo("id", binding.loginId.text.toString())
@@ -64,6 +67,8 @@ class LoginActivity : AppCompatActivity() {
                                 }
                                 var intent = Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(intent)
+                                finish()
+
                             } else {
                                 Toast.makeText(
                                     this@LoginActivity,
@@ -100,6 +105,7 @@ class LoginActivity : AppCompatActivity() {
         } else{
             var intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
+            finish()
         }
         super.onStart()
 
@@ -122,5 +128,18 @@ class LoginActivity : AppCompatActivity() {
         val ciphertext = cipher.doFinal(this.toByteArray())
         val encodedByte = Base64.encode(ciphertext, Base64.DEFAULT)
         return String(encodedByte)
+    }
+    override fun onBackPressed() {
+        if(System.currentTimeMillis()>backKeyPressedTime+2000){
+            backKeyPressedTime = System.currentTimeMillis()
+            Toast.makeText(this,"뒤로 가기를 한 번 더 누르시면 종료합니다.",Toast.LENGTH_SHORT).show()
+        } else {
+            AppFinish()
+        }
+    }
+    fun AppFinish(){
+        finish()
+        System.exit(0)
+
     }
 }

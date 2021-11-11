@@ -1,5 +1,6 @@
 package com.example.record_a_day
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import com.example.record_a_day.databinding.ActivityMainBinding
+import com.example.record_a_day.manager.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     private var show = false
 
     private val TAG = "TESTTEST"
+    private val AUTO_LOGIN_KEY = "auto_login"
 
     private var backKeyPressedTime = 0L
     lateinit var myInfo_anim : Animation
@@ -55,6 +58,12 @@ class MainActivity : AppCompatActivity() {
         binding.moreBtn.setOnClickListener {
             if(!show)
                 showMoreBtn()
+        }
+        binding.logout.setOnClickListener {
+            PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
+            var i = Intent(this,LoginActivity::class.java)
+            startActivity(i)
+            finish()
         }
     }
     fun showMoreBtn(){
@@ -119,7 +128,7 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         if(System.currentTimeMillis()>backKeyPressedTime+2000){
             backKeyPressedTime = System.currentTimeMillis()
-            Toast.makeText(this,"뒤로가기를 한 번 더 누르시면 앱을 종료합니다.",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,"뒤로 가기를 한 번 더 누르시면 종료합니다.",Toast.LENGTH_SHORT).show()
         } else {
             AppFinish()
         }
