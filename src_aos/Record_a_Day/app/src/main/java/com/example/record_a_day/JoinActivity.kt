@@ -11,8 +11,10 @@ import android.text.TextWatcher
 import android.util.Base64
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.Toast
 import com.example.record_a_day.databinding.ActivityJoinBinding
+import com.example.record_a_day.util.SoftKeyboardDectectorView
 
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -77,6 +79,20 @@ class JoinActivity : AppCompatActivity() {
         mBinding = ActivityJoinBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUI()
+        val mSoftKeyboardDectectorView = SoftKeyboardDectectorView(this)
+        addContentView(mSoftKeyboardDectectorView, FrameLayout.LayoutParams(-1,-1))
+
+        mSoftKeyboardDectectorView.setOnShownKeyboard(object :SoftKeyboardDectectorView.OnShownKeyboardListener{
+            override fun onShowSoftKeyboard() {
+                binding.logoImg.visibility = View.GONE
+            }
+        })
+        mSoftKeyboardDectectorView.setOnHiddenKeyboard(object :SoftKeyboardDectectorView.OnHiddenKeyboardListener{
+            override fun onHiddenSoftKeyboard() {
+                binding.logoImg.visibility = View.VISIBLE
+            }
+
+        })
     }
     fun setUI(){
         //비밀번호 입력
