@@ -7,6 +7,7 @@
     tools:context=".JoinActivity">
 
     <ImageView
+        android:id="@+id/logo_img"
         android:layout_width="128dp"
         android:layout_height="128dp"
         android:background="@drawable/logo_text"
@@ -226,7 +227,7 @@
         android:id="@+id/join_btn"
         android:layout_width="150dp"
         android:layout_height="40dp"
-        android:layout_marginVertical="50dp"
+        android:layout_marginVertical="10dp"
         android:background="@drawable/join_btn_selector"
         android:enabled="false"
         android:gravity="center"
