@@ -8,7 +8,10 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.example.record_a_day.databinding.ActivityMainBinding
+import com.example.record_a_day.fragment.MyInfoFragment
 import com.example.record_a_day.manager.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
@@ -27,11 +30,18 @@ class MainActivity : AppCompatActivity() {
     private val AUTO_LOGIN_KEY = "auto_login"
 
     private var backKeyPressedTime = 0L
+
+    lateinit var fragmentManager : FragmentManager
+    lateinit var myInfoFragment : MyInfoFragment
+    lateinit var transaction : FragmentTransaction
+
     lateinit var myInfo_anim : Animation
     lateinit var record_anim : Animation
     lateinit var taskList_anim : Animation
     lateinit var goal_anim : Animation
     lateinit var share_anim : Animation
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,8 +49,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         init()
-
+        fragment_inint()
+        button_init()
     }
+    //----------------------------------------------------------------------------------------------
+    // Initialize Method
+    //----------------------------------------------------------------------------------------------
     fun init(){
 
         myInfo_anim = AnimationUtils.loadAnimation(this,R.anim.myinfo_anim)
@@ -122,6 +136,21 @@ class MainActivity : AppCompatActivity() {
                 clearAnimation()
             }
             show = false
+        }
+    }
+
+    fun fragment_inint() {
+        fragmentManager = supportFragmentManager
+        myInfoFragment = MyInfoFragment()
+
+        //transaction = fragmentManager.beginTransaction()
+        //transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
+    }
+    fun button_init(){
+        binding.myinfoBtn.setOnClickListener {
+            transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
+            Log.d(TAG,"click fragment")
         }
     }
 
