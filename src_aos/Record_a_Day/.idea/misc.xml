@@ -7,7 +7,10 @@
         <entry key="app/src/main/res/layout/activity_join.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/goal_fragment.xml" value="0.1" />
         <entry key="app/src/main/res/layout/myinfo_fragment.xml" value="0.18642350557244175" />
+        <entry key="app/src/main/res/layout/record_fragment.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/tasklist_fragment.xml" value="0.1" />
       </map>
     </option>
   </component>
