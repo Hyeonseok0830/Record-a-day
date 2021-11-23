@@ -11,12 +11,16 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.record_a_day.databinding.ActivityMainBinding
+import com.example.record_a_day.fragment.GoalFragment
 import com.example.record_a_day.fragment.MyInfoFragment
+import com.example.record_a_day.fragment.RecordFragment
+import com.example.record_a_day.fragment.TaskFragment
 import com.example.record_a_day.manager.PreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,16 +29,26 @@ class MainActivity : AppCompatActivity() {
     private val binding get() = mBinding!!
 
     private var show = false
+    private var timer:Timer ?= null
+
 
     private val TAG = "TESTTEST"
     private val AUTO_LOGIN_KEY = "auto_login"
 
     private var backKeyPressedTime = 0L
-
+    /*
+    * fragment 관련
+    * */
     lateinit var fragmentManager : FragmentManager
     lateinit var myInfoFragment : MyInfoFragment
+    lateinit var taskFragment : TaskFragment
+    lateinit var recordFragment:  RecordFragment
+    lateinit var goalFragment: GoalFragment
     lateinit var transaction : FragmentTransaction
 
+    /*
+    * animation 관련
+    * */
     lateinit var myInfo_anim : Animation
     lateinit var record_anim : Animation
     lateinit var taskList_anim : Animation
@@ -68,17 +82,7 @@ class MainActivity : AppCompatActivity() {
         share_anim = AnimationUtils.loadAnimation(this,R.anim.share_anim)
         share_anim.fillAfter = true
 
-        //하단 메뉴 버튼 클릭
-        binding.moreBtn.setOnClickListener {
-            if(!show)
-                showMoreBtn()
-        }
-        binding.logout.setOnClickListener {
-            PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
-            var i = Intent(this,LoginActivity::class.java)
-            startActivity(i)
-            finish()
-        }
+
     }
     fun showMoreBtn(){
         show=true
@@ -109,7 +113,6 @@ class MainActivity : AppCompatActivity() {
         }
         CoroutineScope(Main).launch {
             delay(3000L)
-            Log.d(TAG, "showMoreBtn: $show")
             hideMoreBtn()
         }
     }
@@ -142,15 +145,45 @@ class MainActivity : AppCompatActivity() {
     fun fragment_inint() {
         fragmentManager = supportFragmentManager
         myInfoFragment = MyInfoFragment()
+        recordFragment = RecordFragment()
+        taskFragment = TaskFragment()
+        goalFragment = GoalFragment()
 
-        //transaction = fragmentManager.beginTransaction()
-        //transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
+        transaction = fragmentManager.beginTransaction()
+        transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
     }
     fun button_init(){
+
+        //하단 메뉴 버튼 - 메뉴 펼치기
+        binding.moreBtn.setOnClickListener {
+            if(!show)
+                showMoreBtn()
+        }
+        binding.logout.setOnClickListener {
+            PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
+            var i = Intent(this,LoginActivity::class.java)
+            startActivity(i)
+            finish()
+        }
+        //각 메뉴 버튼 - 내 정보 버튼
         binding.myinfoBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
-            Log.d(TAG,"click fragment")
+        }
+        //각 메뉴 버튼 - 일기장 버튼
+        binding.recordBtn.setOnClickListener {
+            transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.display_view, recordFragment).commitAllowingStateLoss()
+        }
+        //각 메뉴 버튼 - 일기장 버튼
+        binding.taskListBtn.setOnClickListener {
+            transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.display_view, taskFragment).commitAllowingStateLoss()
+        }
+        //각 메뉴 버튼 - 일기장 버튼
+        binding.goalBtn.setOnClickListener {
+            transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.display_view, goalFragment).commitAllowingStateLoss()
         }
     }
 
