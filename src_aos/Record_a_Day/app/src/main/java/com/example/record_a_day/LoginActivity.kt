@@ -24,7 +24,10 @@ class LoginActivity : AppCompatActivity() {
     private val binding get() = mBinding!!
 
     //SharedPref 키 값 - 자동 로그인
-    private val AUTO_LOGIN_KEY = "auto_login"
+    companion object{
+        const val AUTO_LOGIN_KEY = "auto_login"
+        const val USER_INFO_KEY = "user_info"
+    }
     //firestore 객체
     val firestore = FirebaseFirestore.getInstance()
 
@@ -32,8 +35,8 @@ class LoginActivity : AppCompatActivity() {
 
     private var backKeyPressedTime = 0L
 
-    private val app_mode = "DEBUG" // 메인 화면 진입
-    //private val app_mode = "COMM"
+    //private val app_mode = "DEBUG" // 메인 화면 진입
+    private val app_mode = "COMM"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,13 +44,15 @@ class LoginActivity : AppCompatActivity() {
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.loginBtn.setOnClickListener {
+            var id = binding.loginId.text.toString()
             if(app_mode.equals("DEBUG")){
                 if(binding.autoLogin.isChecked) {
-                    var id = binding.loginId.text.toString()
                     PreferenceManager.setString(this,AUTO_LOGIN_KEY,id)
                 } else {
                     PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
                 }
+                PreferenceManager.setString(this, USER_INFO_KEY,"정현석|test")
+
                 var intent = Intent(this@LoginActivity, MainActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -58,13 +63,14 @@ class LoginActivity : AppCompatActivity() {
                     .addOnSuccessListener { documents ->
                         for (document in documents) {
                             if (document.data["pw"] == binding.loginPw.text.toString().encryptECB()) {
+                                val id = document.data["id"]
+                                val name = document.data["name"]
                                 if(binding.autoLogin.isChecked) {
-                                    var id = document.data["id"]
-                                    var name = document.data["name"]
-                                    PreferenceManager.setString(this,AUTO_LOGIN_KEY,"$id|$name")
+                                    PreferenceManager.setString(this,AUTO_LOGIN_KEY,"$name|$id")
                                 } else {
                                     PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
                                 }
+                                PreferenceManager.setString(this, USER_INFO_KEY,"$name|$id")
                                 var intent = Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(intent)
                                 finish()
