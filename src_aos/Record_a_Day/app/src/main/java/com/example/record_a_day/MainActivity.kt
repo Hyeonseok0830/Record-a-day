@@ -3,6 +3,7 @@ package com.example.record_a_day
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -23,16 +24,17 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
+    /*
+    * ViewBinding 관련
+    * */
     private var mBinding:ActivityMainBinding? = null
 
     private val binding get() = mBinding!!
 
     private var show = false
-    private var timer:Timer ?= null
-
 
     private val TAG = "TESTTEST"
+    //SharedPref 키 값
     private val AUTO_LOGIN_KEY = "auto_login"
 
     private var backKeyPressedTime = 0L
@@ -55,7 +57,15 @@ class MainActivity : AppCompatActivity() {
     lateinit var goal_anim : Animation
     lateinit var share_anim : Animation
 
-
+    /*
+    * Handler 변수
+    * */
+    lateinit var handler: Handler
+    companion object{
+        const val SHOW_BTN = 0
+        const val HIDE_BTN = 1
+        const val BTN_HIDE_DELAY = 3500L
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -71,17 +81,34 @@ class MainActivity : AppCompatActivity() {
     //----------------------------------------------------------------------------------------------
     fun init(){
 
-        myInfo_anim = AnimationUtils.loadAnimation(this,R.anim.myinfo_anim)
-        myInfo_anim.fillAfter = true
-        record_anim = AnimationUtils.loadAnimation(this,R.anim.record_anim)
-        record_anim.fillAfter = true
-        taskList_anim = AnimationUtils.loadAnimation(this,R.anim.tasklist_anim)
-        taskList_anim.fillAfter = true
-        goal_anim = AnimationUtils.loadAnimation(this,R.anim.goal_anim)
-        goal_anim.fillAfter = true
-        share_anim = AnimationUtils.loadAnimation(this,R.anim.share_anim)
-        share_anim.fillAfter = true
+        myInfo_anim = AnimationUtils.loadAnimation(this,R.anim.myinfo_anim).apply{
+            fillAfter = true
+        }
+        record_anim = AnimationUtils.loadAnimation(this,R.anim.record_anim).apply {
+            fillAfter = true
+        }
+        taskList_anim = AnimationUtils.loadAnimation(this,R.anim.tasklist_anim).apply {
+            fillAfter = true
+        }
+        goal_anim = AnimationUtils.loadAnimation(this,R.anim.goal_anim).apply {
+            fillAfter = true
+        }
+        share_anim = AnimationUtils.loadAnimation(this,R.anim.share_anim).apply {
+            fillAfter = true
+        }
 
+        handler = Handler{
+            when(it.what){
+                SHOW_BTN-> {
+                    showMoreBtn()
+                }
+                HIDE_BTN -> {
+                    Log.d(TAG, "init: hide")
+                    hideMoreBtn()
+                }
+            }
+            true
+        }
 
     }
     fun showMoreBtn(){
@@ -111,35 +138,30 @@ class MainActivity : AppCompatActivity() {
             animation = share_anim
             startAnimation(animation)
         }
-        CoroutineScope(Main).launch {
-            delay(3000L)
-            hideMoreBtn()
-        }
     }
     fun hideMoreBtn(){
-        if(show) {
-            binding.myinfoBtn.apply {
-                visibility = View.INVISIBLE
-                clearAnimation()
-            }
-            binding.recordBtn.apply {
-                visibility = View.INVISIBLE
-                clearAnimation()
-            }
-            binding.taskListBtn.apply {
-                visibility = View.INVISIBLE
-                clearAnimation()
-            }
-            binding.goalBtn.apply {
-                visibility = View.INVISIBLE
-                clearAnimation()
-            }
-            binding.shareBtn.apply {
-                visibility = View.INVISIBLE
-                clearAnimation()
-            }
-            show = false
+        binding.myinfoBtn.apply {
+            visibility = View.INVISIBLE
+            clearAnimation()
         }
+        binding.recordBtn.apply {
+            visibility = View.INVISIBLE
+            clearAnimation()
+        }
+        binding.taskListBtn.apply {
+            visibility = View.INVISIBLE
+            clearAnimation()
+        }
+        binding.goalBtn.apply {
+            visibility = View.INVISIBLE
+            clearAnimation()
+        }
+        binding.shareBtn.apply {
+            visibility = View.INVISIBLE
+            clearAnimation()
+        }
+
+
     }
 
     fun fragment_inint() {
@@ -156,8 +178,13 @@ class MainActivity : AppCompatActivity() {
 
         //하단 메뉴 버튼 - 메뉴 펼치기
         binding.moreBtn.setOnClickListener {
-            if(!show)
-                showMoreBtn()
+            handler.removeMessages(1)
+            handler.sendEmptyMessage(0)
+            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
+ /*           CoroutineScope(Main).launch {
+                delay(3000L)
+                hideMoreBtn()
+            }*/
         }
         binding.logout.setOnClickListener {
             PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
@@ -169,21 +196,29 @@ class MainActivity : AppCompatActivity() {
         binding.myinfoBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
+            handler.removeMessages(1)
+            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
         }
         //각 메뉴 버튼 - 일기장 버튼
         binding.recordBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, recordFragment).commitAllowingStateLoss()
+            handler.removeMessages(1)
+            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
         }
         //각 메뉴 버튼 - 일기장 버튼
         binding.taskListBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, taskFragment).commitAllowingStateLoss()
+            handler.removeMessages(1)
+            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
         }
         //각 메뉴 버튼 - 일기장 버튼
         binding.goalBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, goalFragment).commitAllowingStateLoss()
+            handler.removeMessages(1)
+            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
         }
     }
 
