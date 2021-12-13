@@ -14,16 +14,17 @@ import com.example.record_a_day.manager.PreferenceManager
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 
-class MyInfoFragment : Fragment(){
+class MyInfoFragment : Fragment() {
 
-    private var mBinding:MyinfoFragmentBinding ?= null
+    private var mBinding: MyinfoFragmentBinding? = null
     private val binding get() = mBinding!!
 
     private val TAG = "TESTTEST"
 
 
-    lateinit var user_info :String
-    lateinit var user_data :UserData
+    lateinit var user_info: String
+    lateinit var user_data: UserData
+
     //firestore 객체
     val firestore = FirebaseFirestore.getInstance()
 
@@ -31,28 +32,29 @@ class MyInfoFragment : Fragment(){
 
         super.onCreate(savedInstanceState)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mBinding = MyinfoFragmentBinding.inflate(inflater,container,false)
+        mBinding = MyinfoFragmentBinding.inflate(inflater, container, false)
         user_info = activity?.let {
-            PreferenceManager.getString(it.applicationContext,LoginActivity.USER_INFO_KEY)
+            PreferenceManager.getString(it.applicationContext, LoginActivity.USER_INFO_KEY)
         }.toString()
         Log.i(TAG, "onCreateView: $user_info")
 
         val list = arrayListOf<String>()
-        StringTokenizer(user_info,"|").apply {
-            while(hasMoreTokens()){
+        StringTokenizer(user_info, "|").apply {
+            while (hasMoreTokens()) {
                 list.add(nextToken())
             }
         }
-        user_data = UserData(list[0], list[1],"","","")
+        user_data = UserData(list[0], list[1], "", "", "")
 
 
         firestore.collection("record")
-            .whereEqualTo("id",user_data.id)
+            .whereEqualTo("id", user_data.id)
             .get()
             .addOnSuccessListener { documents ->
                 "${documents.size()} 회".also { binding.recordCount.text = it }
