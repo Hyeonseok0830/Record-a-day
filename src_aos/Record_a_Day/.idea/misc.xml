@@ -5,7 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/join_btn_selector.xml" value="0.1640625" />
         <entry key="app/src/main/res/layout/activity_join.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_login.xml" value="0.33" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.165" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="app/src/main/res/layout/goal_fragment.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_record_recycler.xml" value="0.335" />
@@ -16,7 +16,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

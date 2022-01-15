@@ -40,10 +40,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:20.0.2'
     implementation 'com.google.firebase:firebase-messaging:23.0.0'
     implementation 'com.google.firebase:firebase-firestore:24.0.0'
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
-    compile 'com.airbnb.android:lottie:4.1.0'
     implementation platform('com.google.firebase:firebase-bom:28.4.2')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    compile 'com.airbnb.android:lottie:4.1.0'
+
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -54,8 +57,15 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.code.gson:gson:2.8.6'
 
+    implementation 'com.google.code.gson:gson:2.8.6'
+    //RxAndroid와 RxJava , RxKotlin 추가
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
+
+    // 필요한 API를 찾아서 추가 합니다.
+    implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
+    implementation 'com.uniquext.android:rxlifecycle:2.0.0'
 }
 apply plugin: 'com.google.gms.google-services'  // Google Services plugin

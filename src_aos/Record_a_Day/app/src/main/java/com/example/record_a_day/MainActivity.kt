@@ -22,6 +22,9 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
+import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
+import io.reactivex.observers.DisposableObserver
 
 class MainActivity : AppCompatActivity() {
     /*
@@ -60,7 +63,8 @@ class MainActivity : AppCompatActivity() {
     /*
     * Handler 변수
     * */
-    lateinit var handler: Handler
+    lateinit var mHandler: Handler
+    
     companion object{
         const val SHOW_BTN = 0
         const val HIDE_BTN = 1
@@ -73,9 +77,36 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         init()
-        fragment_inint()
-        button_init()
+        fragmentInit()
+        buttonInit()
+
+        val source = Observable.create<String> {
+            it.onNext("test")
+            it.onComplete()
+        }
+        source.subscribe(mObserver)
     }
+
+    override fun onStart() {
+        Log.i(TAG, "onStart: $this")
+        super.onStart()
+    }
+    override fun onResume() {
+        Log.i(TAG, "onResume: $this")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        Log.i(TAG, "onPause: $this")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        Log.i(TAG, "onStop: $this")
+        super.onStop()
+    }
+
+
     //----------------------------------------------------------------------------------------------
     // Initialize Method
     //----------------------------------------------------------------------------------------------
@@ -97,7 +128,7 @@ class MainActivity : AppCompatActivity() {
             fillAfter = true
         }
 
-        handler = Handler{
+        mHandler = Handler{
             when(it.what){
                 SHOW_BTN-> {
                     showMoreBtn()
@@ -164,7 +195,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun fragment_inint() {
+    fun fragmentInit() {
         fragmentManager = supportFragmentManager
         myInfoFragment = MyInfoFragment()
         recordFragment = RecordFragment()
@@ -174,13 +205,13 @@ class MainActivity : AppCompatActivity() {
         transaction = fragmentManager.beginTransaction()
         transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
     }
-    fun button_init(){
+    fun buttonInit(){
 
         //하단 메뉴 버튼 - 메뉴 펼치기
         binding.moreBtn.setOnClickListener {
-            handler.removeMessages(1)
-            handler.sendEmptyMessage(0)
-            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
+            mHandler.removeMessages(1)
+            mHandler.sendEmptyMessage(0)
+            mHandler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
  /*           CoroutineScope(Main).launch {
                 delay(3000L)
                 hideMoreBtn()
@@ -196,29 +227,29 @@ class MainActivity : AppCompatActivity() {
         binding.myinfoBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
-            handler.removeMessages(1)
-            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
+            mHandler.removeMessages(1)
+            mHandler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
         }
         //각 메뉴 버튼 - 일기장 버튼
         binding.recordBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, recordFragment).commitAllowingStateLoss()
-            handler.removeMessages(1)
-            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
+            mHandler.removeMessages(1)
+            mHandler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
         }
         //각 메뉴 버튼 - 일기장 버튼
         binding.taskListBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, taskFragment).commitAllowingStateLoss()
-            handler.removeMessages(1)
-            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
+            mHandler.removeMessages(1)
+            mHandler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
         }
         //각 메뉴 버튼 - 일기장 버튼
         binding.goalBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, goalFragment).commitAllowingStateLoss()
-            handler.removeMessages(1)
-            handler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
+            mHandler.removeMessages(1)
+            mHandler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
         }
     }
 
@@ -240,4 +271,20 @@ class MainActivity : AppCompatActivity() {
         mBinding = null
         super.onDestroy()
     }
+
+    var mObserver = object : DisposableObserver<String>(){
+        override fun onNext(str: String) {
+            Log.i(TAG, "onNext: $str")
+        }
+
+        override fun onError(e: Throwable) {
+            e.printStackTrace()
+        }
+
+        override fun onComplete() {
+            Log.i(TAG, "onComplete: ")
+        }
+
+    }
+
 }
