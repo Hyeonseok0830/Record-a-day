@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     private var show = false
 
-    private val TAG = "TESTTEST"
+    private val TAG = "seok"
     //SharedPref 키 값
     private val AUTO_LOGIN_KEY = "auto_login"
 

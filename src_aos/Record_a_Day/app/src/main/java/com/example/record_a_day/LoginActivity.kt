@@ -15,6 +15,7 @@ import com.airbnb.lottie.animation.keyframe.BaseKeyframeAnimation
 
 import com.example.record_a_day.databinding.ActivityLoginBinding
 import com.example.record_a_day.manager.PreferenceManager
+import com.example.record_a_day.manager.UserDataManager
 import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.crypto.Cipher
@@ -34,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
     //firestore 객체
     val firestore = FirebaseFirestore.getInstance()
 
-    private val TAG = "TESTTEST"
+    private val TAG = "seok"
 
     private var backKeyPressedTime = 0L
 
