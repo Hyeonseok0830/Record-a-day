@@ -38,7 +38,7 @@ class JoinActivity : AppCompatActivity() {
     val firestore = FirebaseFirestore.getInstance()
 
     val auth = FirebaseAuth.getInstance()
-    private val TAG = "TESTTEST"
+    private val TAG = "seok"
 
     companion object {
         const val SECRET_KEY = "ABCDEFGH12345678"

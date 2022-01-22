@@ -19,7 +19,7 @@ class MyInfoFragment : Fragment() {
     private var mBinding: MyinfoFragmentBinding? = null
     private val binding get() = mBinding!!
 
-    private val TAG = "TESTTEST"
+    private val TAG = "seok"
 
 
     lateinit var user_info: String
