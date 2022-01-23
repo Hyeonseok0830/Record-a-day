@@ -1,11 +1,15 @@
 package com.example.record_a_day.fragment
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.RatingBar
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -58,9 +62,30 @@ class RecordFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initFunctions()
         initRecyclerView()
 
     }
+
+    private fun initFunctions() {
+        binding.recordDay.setOnClickListener {
+            Log.d(TAG, "initFunctions: click Record Btn")
+            val builder = AlertDialog.Builder(mContext!!)
+            val dialogView = layoutInflater.inflate(R.layout.record_dialog, null)
+            val dialogTitle = dialogView.findViewById<EditText>(R.id.record_title)
+            builder
+                .setView(dialogView)
+                .setPositiveButton("확인") { dialogInterface, i ->
+
+                }
+                .setNegativeButton("취소") { dialogInterface, i ->
+                    /* 취소일 때 아무 액션이 없으므로 빈칸 */
+                }
+                .show()
+            }
+
+        }
+
 
     private fun initRecyclerView() {
 
