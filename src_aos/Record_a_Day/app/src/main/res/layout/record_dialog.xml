@@ -13,6 +13,8 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="24dp"
         android:text="하루를 기록하기"
+        android:gravity="center"
+        android:textColor="@android:color/black"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -21,6 +23,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
+        android:gravity="center"
+        android:textColor="@android:color/black"
         android:hint="제목을 입력해주세요" />
+    <Spinner
+        android:id="@+id/weatherSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginHorizontal="5dp"
+        android:layout_marginVertical="16dp"
+        />
+    <EditText
+        android:id="@+id/record_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:hint="내용을 입력해주세요" />
 
 </LinearLayout>

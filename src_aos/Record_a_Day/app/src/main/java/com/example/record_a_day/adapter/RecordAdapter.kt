@@ -27,7 +27,9 @@ class RecordAdapter() : RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
 
         fun bind(item : RecordItem){
             recordTitle.text = item.title.toString()
-            recordDate.text = item.date.toString()
+            var date = item.date.toString()
+            recordDate.text = date
+            //recordDate.text = date.substring(0,4) + "/" + date.substring(4,6) + "/" + date.substring(6,8)
             var weatherImg= when(item.weather){
                 "clear" -> R.drawable.clear
                 "cloudy" -> R.drawable.cloudy

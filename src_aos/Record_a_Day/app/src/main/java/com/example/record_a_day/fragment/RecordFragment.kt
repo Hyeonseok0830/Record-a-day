@@ -4,11 +4,11 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.RatingBar
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +23,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.auth.User
 import io.reactivex.Observable
 import io.reactivex.observers.DisposableObserver
+import java.text.SimpleDateFormat
+import java.util.*
 
 class RecordFragment : Fragment() {
 
@@ -69,17 +71,89 @@ class RecordFragment : Fragment() {
 
     private fun initFunctions() {
         binding.recordDay.setOnClickListener {
+            val weatherData = resources.getStringArray(R.array.weather_array)
+//            val weatherData = arrayOf(
+//                R.drawable.clear,
+//                R.drawable.cloudy,
+//                R.drawable.cold,
+//                R.drawable.partly_sunny,
+//                R.drawable.raining,
+//                R.drawable.snowing
+//            )
+            val myAdapter = object : ArrayAdapter<String>(mContext!!,R.layout.weather_item_spinner){
+                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                    val v = super.getView(position, convertView, parent)
+                    return v
+                }
+
+                override fun getCount(): Int {
+                    return super.getCount() - 1
+                }
+
+            }
+            myAdapter.addAll(weatherData.toMutableList())
+            //힌트로 사용할 문구를 마지막 아이템에 추가해 줍니다.
+            myAdapter.add("날씨를 선택해주세요.")
             Log.d(TAG, "initFunctions: click Record Btn")
             val builder = AlertDialog.Builder(mContext!!)
             val dialogView = layoutInflater.inflate(R.layout.record_dialog, null)
             val dialogTitle = dialogView.findViewById<EditText>(R.id.record_title)
+            val dialogContent = dialogView.findViewById<EditText>(R.id.record_content)
+            var dialogWeather = "clear"
+            val spinner = dialogView.findViewById<Spinner>(R.id.weatherSpinner)
+
+            spinner.adapter = myAdapter
+            spinner.setSelection(myAdapter.count)
+            spinner.dropDownVerticalOffset = dipToPixels(45f).toInt()
+
+//스피너 선택시 나오는 화면 입니다.
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+
+                    //아이템이 클릭 되면 맨 위부터 position 0번부터 순서대로 동작하게 됩니다.
+                    dialogWeather = when (position) {
+                        0 -> "clear"
+                        1 -> "cloudy"
+                        2 -> "cold"
+                        3 -> "partly_sunny"
+                        4 -> "raining"
+                        5 -> "snowing"
+                        else -> "clear"
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>) {
+                    Log.d("MyTag", "onNothingSelected")
+                }
+            }
+
             builder
                 .setView(dialogView)
                 .setPositiveButton("확인") { dialogInterface, i ->
+                    var mDate = Date(System.currentTimeMillis())
+                    var recordDate = SimpleDateFormat("yyyy/MM/dd").format(mDate)
+                    var recordData = mutableMapOf(
+                        "id" to UserDataManager.getInstance(mContext!!).id,
+                        "title" to dialogTitle.text.toString(),
+                        "content" to dialogContent.text.toString(),
+                        "weather" to dialogWeather.toString(),
+                        "date" to recordDate.toString()
+                    )
+                    firestore.collection("record")
+                        .add(recordData)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "onCreate: Success add record info")
+                            initRecyclerView()
+                        }
+                        .addOnFailureListener {
+                            Log.d(TAG, "onCreate: Fail add record info")
 
+                        }
+                    dialogInterface.dismiss()
                 }
                 .setNegativeButton("취소") { dialogInterface, i ->
                     /* 취소일 때 아무 액션이 없으므로 빈칸 */
+                    dialogInterface.dismiss()
                 }
                 .show()
             }
@@ -107,12 +181,15 @@ class RecordFragment : Fragment() {
                     }
 
                 }
-                val source = Observable.create<MutableList<RecordItem>> {
-                    it.onNext(datas)
-                    it.onComplete()
-                }
-                source.subscribe(mObserver)
+//                val source = Observable.create<MutableList<RecordItem>> {
+//                    it.onNext(datas)
+//                    it.onComplete()
+//                }
+//                source.subscribe(mObserver)
+
                 recordAdapter = RecordAdapter()
+                if(!recordAdapter.datas.isEmpty())
+                    recordAdapter.datas.clear()
                 recordAdapter.datas = datas
                 binding.recyclerView.adapter = recordAdapter
                 binding.recyclerView.layoutManager = LinearLayoutManager(mContext!!)
@@ -145,6 +222,13 @@ class RecordFragment : Fragment() {
 
         }
 
+    }
+    private fun dipToPixels(dipValue: Float): Float {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dipValue,
+            resources.displayMetrics
+        )
     }
 
 }
