@@ -38,7 +38,7 @@ class JoinActivity : AppCompatActivity() {
     val firestore = FirebaseFirestore.getInstance()
 
     val auth = FirebaseAuth.getInstance()
-    private val TAG = "TESTTEST"
+    private val TAG = "seok"
 
     companion object {
         const val SECRET_KEY = "ABCDEFGH12345678"
@@ -292,7 +292,7 @@ class JoinActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "signInWithCredential:success")
-                    Toast.makeText(this,"인증료 완료",Toast.LENGTH_LONG).show()
+                    Toast.makeText(this,"인증 완료",Toast.LENGTH_LONG).show()
                     binding.joinBtn.isEnabled = true
                     timerTask?.cancel()
                 } else {

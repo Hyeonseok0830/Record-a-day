@@ -5,18 +5,22 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService(){
+
+
+    private val TAG = "seok"
+
     override fun onCreate() {
         super.onCreate()
-        Log.d("TESTTEST","service create")
+        Log.d(TAG,"service create")
     }
     override fun onNewToken(token: String) {
 
-        Log.d("TESTTEST","token refresh = "+token)
+        Log.d(TAG,"token refresh = "+token)
         super.onNewToken(token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d("TESTTEST", remoteMessage.notification?.body.toString())
+        Log.d(TAG, remoteMessage.notification?.body.toString())
         super.onMessageReceived(remoteMessage)
     }
 }

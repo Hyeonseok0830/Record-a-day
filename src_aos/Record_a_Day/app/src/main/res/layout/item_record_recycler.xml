@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:paddingHorizontal="20dp"
+    android:paddingVertical="10dp"
+    android:layout_marginHorizontal="3dp"
+    android:layout_marginVertical="3dp"
+    android:background="@drawable/record_item_border">
+
+    <TextView
+        android:id="@+id/record_title"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="일기 제목" />
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/record_date"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginHorizontal="30dp"
+        android:textSize="16sp"
+        android:maxLines="1"
+        android:text="2021.12.14" />
+
+    <View
+        android:layout_width="2dp"
+        android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/record_weather"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"/>
+</LinearLayout>
