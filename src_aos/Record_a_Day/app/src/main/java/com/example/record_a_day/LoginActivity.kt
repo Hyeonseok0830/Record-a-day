@@ -11,12 +11,8 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.airbnb.lottie.LottieAnimationView
-import com.airbnb.lottie.animation.keyframe.BaseKeyframeAnimation
-
 import com.example.record_a_day.databinding.ActivityLoginBinding
 import com.example.record_a_day.manager.PreferenceManager
-import com.example.record_a_day.manager.UserDataManager
-import com.google.firebase.database.*
 import com.google.firebase.firestore.FirebaseFirestore
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec

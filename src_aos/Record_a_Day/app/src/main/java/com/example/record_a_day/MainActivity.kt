@@ -1,14 +1,13 @@
 package com.example.record_a_day
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
-import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.record_a_day.databinding.ActivityMainBinding
@@ -17,13 +16,7 @@ import com.example.record_a_day.fragment.MyInfoFragment
 import com.example.record_a_day.fragment.RecordFragment
 import com.example.record_a_day.fragment.TaskFragment
 import com.example.record_a_day.manager.PreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.util.*
 import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
 import io.reactivex.observers.DisposableObserver
 
 class MainActivity : AppCompatActivity() {
@@ -128,7 +121,7 @@ class MainActivity : AppCompatActivity() {
             fillAfter = true
         }
 
-        mHandler = Handler{
+       /* mHandler = Handler{
             when(it.what){
                 SHOW_BTN-> {
                     showMoreBtn()
@@ -139,10 +132,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             true
-        }
+        }*/
 
     }
-    fun showMoreBtn(){
+    //메뉴 버튼  네비게이션뷰로 변경 (2022/07/16 by seok)
+    /*fun showMoreBtn(){
         show=true
         binding.myinfoBtn.apply {
             visibility = View.VISIBLE
@@ -193,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-    }
+    }*/
 
     fun fragmentInit() {
         fragmentManager = supportFragmentManager
@@ -207,23 +201,54 @@ class MainActivity : AppCompatActivity() {
     }
     fun buttonInit(){
 
+        binding.bottomNavigationview.run {
+            setOnItemSelectedListener { item ->
+                when(item.itemId){
+                    R.id.menu_myinfo ->{
+                        transaction = fragmentManager.beginTransaction();
+                        transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
+                    }
+                    R.id.menu_record ->{
+                        transaction = fragmentManager.beginTransaction();
+                        transaction.replace(R.id.display_view, recordFragment).commitAllowingStateLoss()
+                    }
+                    R.id.menu_tasklist ->{
+                        transaction = fragmentManager.beginTransaction();
+                        transaction.replace(R.id.display_view, taskFragment).commitAllowingStateLoss()
+                    }
+                    R.id.menu_goal ->{
+                        transaction = fragmentManager.beginTransaction();
+                        transaction.replace(R.id.display_view, goalFragment).commitAllowingStateLoss()
+                    }
+                    R.id.menu_share ->{
+                        transaction = fragmentManager.beginTransaction();
+                        transaction.replace(R.id.display_view, goalFragment).commitAllowingStateLoss()
+                    }
+
+                }
+                true
+            }
+            selectedItemId = R.id.menu_myinfo
+        }
+
         //하단 메뉴 버튼 - 메뉴 펼치기
-        binding.moreBtn.setOnClickListener {
+     /*   binding.moreBtn.setOnClickListener {
             mHandler.removeMessages(1)
             mHandler.sendEmptyMessage(0)
             mHandler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
- /*           CoroutineScope(Main).launch {
+ *//*           CoroutineScope(Main).launch {
                 delay(3000L)
                 hideMoreBtn()
-            }*/
-        }
+            }*//*
+        }*/
         binding.logout.setOnClickListener {
             PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
             var i = Intent(this,LoginActivity::class.java)
             startActivity(i)
             finish()
         }
-        //각 메뉴 버튼 - 내 정보 버튼
+        //메뉴 네비게이션 뷰로 변경 (2022/07/16 by seok)
+       /* //각 메뉴 버튼 - 내 정보 버튼
         binding.myinfoBtn.setOnClickListener {
             transaction = fragmentManager.beginTransaction();
             transaction.replace(R.id.display_view, myInfoFragment).commitAllowingStateLoss()
@@ -250,8 +275,10 @@ class MainActivity : AppCompatActivity() {
             transaction.replace(R.id.display_view, goalFragment).commitAllowingStateLoss()
             mHandler.removeMessages(1)
             mHandler.sendEmptyMessageDelayed(1,BTN_HIDE_DELAY)
-        }
+        }*/
     }
+
+
 
     override fun onBackPressed() {
         if(System.currentTimeMillis()>backKeyPressedTime+2000){

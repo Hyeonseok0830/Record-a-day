@@ -1,6 +1,5 @@
 package com.example.record_a_day.fragment
 
-import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +7,10 @@ import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.EditText
+import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,12 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.record_a_day.R
 import com.example.record_a_day.adapter.RecordAdapter
 import com.example.record_a_day.data.RecordItem
-import com.example.record_a_day.databinding.MyinfoFragmentBinding
 import com.example.record_a_day.databinding.RecordFragmentBinding
 import com.example.record_a_day.manager.UserDataManager
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
-import io.reactivex.Observable
 import io.reactivex.observers.DisposableObserver
 import java.text.SimpleDateFormat
 import java.util.*
@@ -106,7 +105,7 @@ class RecordFragment : Fragment() {
             spinner.setSelection(myAdapter.count)
             spinner.dropDownVerticalOffset = dipToPixels(45f).toInt()
 
-//스피너 선택시 나오는 화면 입니다.
+            //스피너 선택시 나오는 화면 입니다.
             spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
@@ -162,8 +161,6 @@ class RecordFragment : Fragment() {
 
 
     private fun initRecyclerView() {
-
-
         Log.d(TAG, "initRecyclerView: ${UserDataManager.getInstance(mContext!!).id}")
 
         firestore.collection("record")
@@ -171,8 +168,8 @@ class RecordFragment : Fragment() {
             .get()
             .addOnSuccessListener { documents ->
                 Log.d(TAG, "initRecyclerView: select success")
+                datas.clear()
                 for (document in documents) {
-
                     datas.apply {
                         add(RecordItem(
                                 document.data["title"].toString(),

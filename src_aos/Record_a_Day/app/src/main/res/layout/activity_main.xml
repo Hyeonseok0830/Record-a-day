@@ -16,75 +16,25 @@
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:text="로그아웃(임시)"/>
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/myinfo_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/more_btn"
-        android:layout_alignParentLeft="true"
-        android:layout_marginVertical="50dp"
-        android:layout_marginHorizontal="40dp"
-        android:clickable="true"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/icon_myinfo" />
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@id/bottom_navigationview"
+        android:background="@color/black"
+        />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/record_btn"
-        android:layout_width="wrap_content"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigationview"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/more_btn"
-        android:layout_alignParentLeft="true"
-        android:layout_marginVertical="120dp"
-        android:layout_marginHorizontal="90dp"
-        android:clickable="true"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/icon_record" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/task_list_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/more_btn"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginVertical="190dp"
-        android:clickable="true"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/icon_tasklist" />
+        android:padding="10dp"
+        app:itemBackground="@color/white"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/bottom_menu" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/goal_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/more_btn"
-        android:layout_alignParentRight="true"
-        android:layout_marginVertical="120dp"
-        android:layout_marginHorizontal="90dp"
-        android:clickable="true"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/icon_goal" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/share_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/more_btn"
-        android:layout_alignParentRight="true"
-        android:layout_marginVertical="50dp"
-        android:layout_marginHorizontal="40dp"
-        android:clickable="true"
-        android:visibility="invisible"
-        app:srcCompat="@drawable/icon_share" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/more_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginVertical="30dp"
-        android:clickable="true"
-        app:srcCompat="@drawable/icon_menu" />
 </RelativeLayout>
 <!--<a href="https://www.streamlinehq.com">Free Interface User Single PNG icon by Streamline</a>-->
 <!--<a href="https://www.streamlinehq.com">Free Interface Edit Write 1 PNG icon by Streamline</a>-->
