@@ -19,6 +19,37 @@
         android:layout_height="2dp"
         android:layout_below="@id/menu_title"
         android:background="@color/deep_gray" />
+    <LinearLayout
+        android:id="@+id/task_add_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="8">
 
+        <EditText
+            android:id="@+id/content_task"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="할 일을 입력하세요."
+            android:layout_marginHorizontal="10dp"
+            android:layout_weight="6"/>
+        <Button
+            android:id="@+id/add_task"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:text="추가"
+            android:layout_marginHorizontal="20dp"
+            android:layout_weight="2"
+            />
+    </LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/task_add_layout"
+        android:layout_marginTop="30dp"
+        android:scrollbars="none"/>
 
 </RelativeLayout>

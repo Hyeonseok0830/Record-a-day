@@ -3,31 +3,26 @@ package com.example.record_a_day
 
 
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
-
 import android.text.TextWatcher
 import android.util.Base64
 import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.example.record_a_day.databinding.ActivityJoinBinding
 import com.example.record_a_day.util.SoftKeyboardDectectorView
-
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
-
 import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import java.util.concurrent.TimeUnit
-
 import java.util.regex.Pattern
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
-import javax.xml.datatype.DatatypeConstants.SECONDS
 
 class JoinActivity : AppCompatActivity() {
 

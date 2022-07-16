@@ -1,9 +1,7 @@
 package com.example.record_a_day.adapter
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,7 +10,6 @@ import coil.load
 import com.example.record_a_day.R
 import com.example.record_a_day.data.RecordItem
 import com.example.record_a_day.databinding.ItemRecordRecyclerBinding
-import com.example.record_a_day.databinding.RecordFragmentBinding
 
 class RecordAdapter() : RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
 
@@ -27,7 +24,9 @@ class RecordAdapter() : RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
 
         fun bind(item : RecordItem){
             recordTitle.text = item.title.toString()
-            recordDate.text = item.date.toString()
+            var date = item.date.toString()
+            recordDate.text = date
+            //recordDate.text = date.substring(0,4) + "/" + date.substring(4,6) + "/" + date.substring(6,8)
             var weatherImg= when(item.weather){
                 "clear" -> R.drawable.clear
                 "cloudy" -> R.drawable.cloudy
