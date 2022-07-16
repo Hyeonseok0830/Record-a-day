@@ -4,7 +4,6 @@ import android.content.Context
 import com.example.record_a_day.LoginActivity
 import com.example.record_a_day.data.UserData
 import java.util.*
-import javax.inject.Singleton
 
 class UserDataManager private constructor() {
 
