@@ -49,6 +49,8 @@ captures/
 *.ipr
 *~
 *.swp
+.idea
+.idea/
 
 # Keystore files
 *.jks
