@@ -50,6 +50,7 @@ captures/
 *~
 *.swp
 .idea
+.idea/
 
 # Keystore files
 *.jks
