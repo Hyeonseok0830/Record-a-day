@@ -12,6 +12,7 @@ import com.example.record_a_day.data.UserData
 import com.example.record_a_day.databinding.MyinfoFragmentBinding
 import com.example.record_a_day.manager.PreferenceManager
 import com.google.firebase.firestore.FirebaseFirestore
+import com.orhanobut.logger.Logger
 import java.util.*
 
 class MyInfoFragment : Fragment() {
@@ -42,7 +43,7 @@ class MyInfoFragment : Fragment() {
         user_info = activity?.let {
             PreferenceManager.getString(it.applicationContext, LoginActivity.USER_INFO_KEY)
         }.toString()
-        Log.i(TAG, "onCreateView: $user_info")
+        Logger.i("onCreateView: $user_info")
 
         val list = arrayListOf<String>()
         StringTokenizer(user_info, "|").apply {
