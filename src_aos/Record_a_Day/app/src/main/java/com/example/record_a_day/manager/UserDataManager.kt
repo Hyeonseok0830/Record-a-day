@@ -1,7 +1,7 @@
 package com.example.record_a_day.manager
 
 import android.content.Context
-import com.example.record_a_day.LoginActivity
+import com.example.record_a_day.view.activity.LoginActivity
 import com.example.record_a_day.data.UserData
 import java.util.*
 
