@@ -1,4 +1,4 @@
-package com.example.record_a_day.fragment
+package com.example.record_a_day.view.fragment
 
 import android.content.Context
 import android.os.Bundle
@@ -21,6 +21,7 @@ import com.example.record_a_day.data.RecordItem
 import com.example.record_a_day.databinding.RecordFragmentBinding
 import com.example.record_a_day.manager.UserDataManager
 import com.google.firebase.firestore.FirebaseFirestore
+import com.orhanobut.logger.Logger
 import io.reactivex.observers.DisposableObserver
 import java.text.SimpleDateFormat
 import java.util.*
@@ -49,6 +50,7 @@ class RecordFragment : Fragment() {
         mContext = context
 
     }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -79,7 +81,7 @@ class RecordFragment : Fragment() {
 //                R.drawable.raining,
 //                R.drawable.snowing
 //            )
-            val myAdapter = object : ArrayAdapter<String>(mContext!!,R.layout.weather_item_spinner){
+            val myAdapter = object : ArrayAdapter<String>(mContext!!, R.layout.weather_item_spinner) {
                 override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                     val v = super.getView(position, convertView, parent)
                     return v
@@ -93,7 +95,7 @@ class RecordFragment : Fragment() {
             myAdapter.addAll(weatherData.toMutableList())
             //힌트로 사용할 문구를 마지막 아이템에 추가해 줍니다.
             myAdapter.add("날씨를 선택해주세요.")
-            Log.d(TAG, "initFunctions: click Record Btn")
+            Logger.d("initFunctions: click Record Btn")
             val builder = AlertDialog.Builder(mContext!!)
             val dialogView = layoutInflater.inflate(R.layout.record_dialog, null)
             val dialogTitle = dialogView.findViewById<EditText>(R.id.record_title)
@@ -122,7 +124,7 @@ class RecordFragment : Fragment() {
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
-                    Log.d("MyTag", "onNothingSelected")
+                    Logger.d("onNothingSelected")
                 }
             }
 
@@ -141,11 +143,11 @@ class RecordFragment : Fragment() {
                     firestore.collection("record")
                         .add(recordData)
                         .addOnSuccessListener {
-                            Log.d(TAG, "onCreate: Success add record info")
+                            Logger.d("onCreate: Success add record info")
                             initRecyclerView()
                         }
                         .addOnFailureListener {
-                            Log.d(TAG, "onCreate: Fail add record info")
+                            Logger.d("onCreate: Fail add record info")
 
                         }
                     dialogInterface.dismiss()
@@ -155,13 +157,13 @@ class RecordFragment : Fragment() {
                     dialogInterface.dismiss()
                 }
                 .show()
-            }
-
         }
+
+    }
 
 
     private fun initRecyclerView() {
-        Log.d(TAG, "initRecyclerView: ${UserDataManager.getInstance(mContext!!).id}")
+        Logger.d("initRecyclerView: ${UserDataManager.getInstance(mContext!!).id}")
 
         firestore.collection("record")
             .whereEqualTo("id", UserDataManager.getInstance(mContext!!).id)
@@ -171,10 +173,13 @@ class RecordFragment : Fragment() {
                 datas.clear()
                 for (document in documents) {
                     datas.apply {
-                        add(RecordItem(
+                        add(
+                            RecordItem(
                                 document.data["title"].toString(),
                                 document.data["date"].toString(),
-                                document.data["weather"].toString()))
+                                document.data["weather"].toString()
+                            )
+                        )
                     }
 
                 }
@@ -185,24 +190,25 @@ class RecordFragment : Fragment() {
 //                source.subscribe(mObserver)
 
                 recordAdapter = RecordAdapter()
-                if(!recordAdapter.datas.isEmpty())
+                if (!recordAdapter.datas.isEmpty())
                     recordAdapter.datas.clear()
                 recordAdapter.datas = datas
                 binding.recyclerView.adapter = recordAdapter
                 binding.recyclerView.layoutManager = LinearLayoutManager(mContext!!)
                 recordAdapter.notifyDataSetChanged()
-                }.addOnFailureListener {
-                    Log.e(TAG, "initRecyclerView: error! ")
-                }
+            }.addOnFailureListener {
+                Logger.e("initRecyclerView: error! ")
+            }
 
 //        Log.i(TAG, "initRecyclerView: ${datas[0].title}")
 //        Log.i(TAG, "initRecyclerView: ${datas[0].date}")
 //        Log.i(TAG, "initRecyclerView: ${datas[0].weather}")
 
     }
-    var mObserver = object : DisposableObserver<MutableList<RecordItem>>(){
+
+    var mObserver = object : DisposableObserver<MutableList<RecordItem>>() {
         override fun onNext(datas: MutableList<RecordItem>) {
-            for(data in datas){
+            for (data in datas) {
 //                Log.d(TAG, "onNext: ${data.title}")
 //                Log.d(TAG, "onNext: ${data.date}")
 //                Log.d(TAG, "onNext: ${data.weather}")
@@ -215,11 +221,12 @@ class RecordFragment : Fragment() {
         }
 
         override fun onComplete() {
-            Log.i(TAG, "onComplete: ")
+            Logger.i("onComplete")
 
         }
 
     }
+
     private fun dipToPixels(dipValue: Float): Float {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
