@@ -11,11 +11,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.record_a_day.databinding.ActivityMainBinding
-import com.example.record_a_day.fragment.GoalFragment
-import com.example.record_a_day.fragment.MyInfoFragment
-import com.example.record_a_day.fragment.RecordFragment
-import com.example.record_a_day.fragment.TaskFragment
+
 import com.example.record_a_day.manager.PreferenceManager
+import com.example.record_a_day.view.activity.LoginActivity
+import com.example.record_a_day.view.fragment.GoalFragment
+import com.example.record_a_day.view.fragment.MyInfoFragment
+import com.example.record_a_day.view.fragment.RecordFragment
+import com.example.record_a_day.view.fragment.TaskFragment
+import com.orhanobut.logger.Logger
 import io.reactivex.Observable
 import io.reactivex.observers.DisposableObserver
 
@@ -40,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var fragmentManager : FragmentManager
     lateinit var myInfoFragment : MyInfoFragment
     lateinit var taskFragment : TaskFragment
-    lateinit var recordFragment:  RecordFragment
+    lateinit var recordFragment: RecordFragment
     lateinit var goalFragment: GoalFragment
     lateinit var transaction : FragmentTransaction
 
@@ -73,29 +76,29 @@ class MainActivity : AppCompatActivity() {
         fragmentInit()
         buttonInit()
 
-        val source = Observable.create<String> {
-            it.onNext("test")
-            it.onComplete()
-        }
-        source.subscribe(mObserver)
+//        val source = Observable.create<String> {
+//            it.onNext("test")
+//            it.onComplete()
+//        }
+//        source.subscribe(mObserver)
     }
 
     override fun onStart() {
-        Log.i(TAG, "onStart: $this")
+        Logger.i("onStart")
         super.onStart()
     }
     override fun onResume() {
-        Log.i(TAG, "onResume: $this")
+        Logger.i("onResume")
         super.onResume()
     }
 
     override fun onPause() {
-        Log.i(TAG, "onPause: $this")
+        Logger.i("onPause")
         super.onPause()
     }
 
     override fun onStop() {
-        Log.i(TAG, "onStop: $this")
+        Logger.i("onStop")
         super.onStop()
     }
 
@@ -243,7 +246,7 @@ class MainActivity : AppCompatActivity() {
         }*/
         binding.logout.setOnClickListener {
             PreferenceManager.setString(this,AUTO_LOGIN_KEY,"")
-            var i = Intent(this,LoginActivity::class.java)
+            var i = Intent(this, LoginActivity::class.java)
             startActivity(i)
             finish()
         }
@@ -288,7 +291,7 @@ class MainActivity : AppCompatActivity() {
             AppFinish()
         }
     }
-    fun AppFinish(){
+    private fun AppFinish(){
         finish()
         System.exit(0)
 

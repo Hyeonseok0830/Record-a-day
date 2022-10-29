@@ -3,6 +3,7 @@
     package="com.example.record_a_day">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
+        android:name=".RecordaDayApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,14 +13,14 @@
         <activity android:name=".MainActivity">
 
         </activity>
-        <activity android:name=".LoginActivity">
+        <activity android:name=".view.activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".JoinActivity"
+        <activity android:name=".view.activity.JoinActivity"
             android:windowSoftInputMode="adjustResize">
         </activity>
         <service

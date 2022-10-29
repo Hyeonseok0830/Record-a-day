@@ -3,6 +3,7 @@ package com.example.record_a_day
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.orhanobut.logger.Logger
 
 class MyFirebaseMessagingService : FirebaseMessagingService(){
 
@@ -11,16 +12,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService(){
 
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG,"service create")
+        Logger.d("service create")
     }
     override fun onNewToken(token: String) {
-
-        Log.d(TAG,"token refresh = "+token)
+        Logger.d("token refresh = $token")
         super.onNewToken(token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, remoteMessage.notification?.body.toString())
+        Logger.d(remoteMessage.notification?.body.toString())
         super.onMessageReceived(remoteMessage)
     }
 }
