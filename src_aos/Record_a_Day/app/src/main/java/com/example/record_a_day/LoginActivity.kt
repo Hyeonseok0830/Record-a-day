@@ -14,6 +14,7 @@ import com.airbnb.lottie.LottieAnimationView
 import com.example.record_a_day.databinding.ActivityLoginBinding
 import com.example.record_a_day.manager.PreferenceManager
 import com.google.firebase.firestore.FirebaseFirestore
+import com.orhanobut.logger.Logger
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
@@ -42,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.i(TAG, "onCreate: $this")
+        Logger.i("onCreate")
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
         animationView = findViewById(R.id.animationView)
@@ -129,8 +130,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                     .addOnFailureListener { exception ->
                         animationView!!.cancelAnimation()
-
-                        Log.w(TAG, "Error getting documents: ", exception)
+                        Logger.w("Error getting documents:$exception")
                     }
             }
 
@@ -148,7 +148,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onStart() {
-        Log.i(TAG, "onStart: $this")
+        Logger.i("onStart")
         var auto_login = PreferenceManager.getString(this,AUTO_LOGIN_KEY)
         if(auto_login.isNullOrEmpty()){
             binding.loginBackground.visibility = View.GONE
@@ -162,17 +162,17 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        Log.i(TAG, "onResume: $this")
+        Logger.i("onResume")
         super.onResume()
     }
 
     override fun onPause() {
-        Log.i(TAG, "onPause: $this")
+        Logger.i("onPause")
         super.onPause()
     }
 
     override fun onStop() {
-        Log.i(TAG, "onStop: $this")
+        Logger.i("onStop")
         if(animationView!=null){
             animationView!!.cancelAnimation()
             animationView = null
@@ -181,7 +181,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        Log.i(TAG, "onDestroy: $this")
+        Logger.i("onDestroy")
         mBinding = null
         super.onDestroy()
     }

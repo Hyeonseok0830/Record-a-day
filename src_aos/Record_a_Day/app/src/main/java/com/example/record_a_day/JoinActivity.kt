@@ -18,6 +18,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.orhanobut.logger.Logger
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.regex.Pattern
@@ -47,11 +48,11 @@ class JoinActivity : AppCompatActivity() {
     private val callbacks by lazy{
         object : PhoneAuthProvider.OnVerificationStateChangedCallbacks(){
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
-                Log.d(TAG, "onVerificationCompleted:$credential")
+                Logger.d("onVerificationCompleted:$credential")
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                Log.e(TAG, "onVerificationFailed", e)
+                Logger.e("onVerificationFailed:$e")
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
                     // Invalid request
@@ -246,11 +247,10 @@ class JoinActivity : AppCompatActivity() {
             firestore.collection("user")
                 .add(user)
                 .addOnSuccessListener {
-                    Log.d(TAG, "onCreate: Success add user info")
+                    Logger.d("onCreate: Success add user info")
                 }
                 .addOnFailureListener {
-                    Log.d(TAG, "onCreate: Fail add user info")
-
+                    Logger.d("onCreate: Fail add user info")
                 }
             finish()
         }
@@ -286,13 +286,13 @@ class JoinActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    Log.d(TAG, "signInWithCredential:success")
+                    Logger.d("signInWithCredential:success")
                     Toast.makeText(this,"인증 완료",Toast.LENGTH_LONG).show()
                     binding.joinBtn.isEnabled = true
                     timerTask?.cancel()
                 } else {
                     // Sign in failed, display a message and update the UI
-                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Logger.d("signInWithCredential:failure  ${task.exception}")
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
                         // The verification code entered was invalid
                     }

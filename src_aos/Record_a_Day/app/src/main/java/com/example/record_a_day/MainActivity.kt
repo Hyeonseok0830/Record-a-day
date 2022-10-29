@@ -16,6 +16,7 @@ import com.example.record_a_day.fragment.MyInfoFragment
 import com.example.record_a_day.fragment.RecordFragment
 import com.example.record_a_day.fragment.TaskFragment
 import com.example.record_a_day.manager.PreferenceManager
+import com.orhanobut.logger.Logger
 import io.reactivex.Observable
 import io.reactivex.observers.DisposableObserver
 
@@ -73,29 +74,29 @@ class MainActivity : AppCompatActivity() {
         fragmentInit()
         buttonInit()
 
-        val source = Observable.create<String> {
-            it.onNext("test")
-            it.onComplete()
-        }
-        source.subscribe(mObserver)
+//        val source = Observable.create<String> {
+//            it.onNext("test")
+//            it.onComplete()
+//        }
+//        source.subscribe(mObserver)
     }
 
     override fun onStart() {
-        Log.i(TAG, "onStart: $this")
+        Logger.i("onStart")
         super.onStart()
     }
     override fun onResume() {
-        Log.i(TAG, "onResume: $this")
+        Logger.i("onResume")
         super.onResume()
     }
 
     override fun onPause() {
-        Log.i(TAG, "onPause: $this")
+        Logger.i("onPause")
         super.onPause()
     }
 
     override fun onStop() {
-        Log.i(TAG, "onStop: $this")
+        Logger.i("onStop")
         super.onStop()
     }
 

@@ -10,6 +10,7 @@ import coil.load
 import com.example.record_a_day.R
 import com.example.record_a_day.data.RecordItem
 import com.example.record_a_day.databinding.ItemRecordRecyclerBinding
+import com.orhanobut.logger.Logger
 
 class RecordAdapter() : RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
 
@@ -46,6 +47,7 @@ class RecordAdapter() : RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
     }
 
     override fun onBindViewHolder(holder: RecordAdapter.ViewHolder, position: Int) {
+        Logger.d("onBindViewHolder: ${datas[position].title}")
         Log.d(TAG, "onBindViewHolder: ${datas[position].title}")
         holder.bind(datas[position])
     }
