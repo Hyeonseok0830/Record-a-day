@@ -1,4 +1,4 @@
-package com.example.record_a_day.fragment
+package com.example.record_a_day.view.fragment
 
 import android.content.Context
 import android.os.Bundle

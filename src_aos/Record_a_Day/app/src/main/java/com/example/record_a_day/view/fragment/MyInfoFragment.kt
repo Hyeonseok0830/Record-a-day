@@ -1,13 +1,12 @@
-package com.example.record_a_day.fragment
+package com.example.record_a_day.view.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.record_a_day.LoginActivity
+import com.example.record_a_day.view.activity.LoginActivity
 import com.example.record_a_day.data.UserData
 import com.example.record_a_day.databinding.MyinfoFragmentBinding
 import com.example.record_a_day.manager.PreferenceManager

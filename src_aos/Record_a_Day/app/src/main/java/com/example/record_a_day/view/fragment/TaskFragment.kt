@@ -1,8 +1,7 @@
-package com.example.record_a_day.fragment
+package com.example.record_a_day.view.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +9,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.record_a_day.R
-import com.example.record_a_day.adapter.RecordAdapter
 import com.example.record_a_day.adapter.TaskAdapter
-import com.example.record_a_day.data.RecordItem
 import com.example.record_a_day.data.TaskItem
-import com.example.record_a_day.databinding.RecordFragmentBinding
 import com.example.record_a_day.databinding.TaskFragmentBinding
 import com.example.record_a_day.manager.UserDataManager
 import com.google.firebase.firestore.FirebaseFirestore

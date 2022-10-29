@@ -1,4 +1,4 @@
-package com.example.record_a_day
+package com.example.record_a_day.view.activity
 
 
 
@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Base64
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -267,7 +266,7 @@ class JoinActivity : AppCompatActivity() {
     fun textValidate(str :String?):Boolean{
         val Password_PATTERN = "^[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힣|]*$"
         var pattern  = Pattern.compile(Password_PATTERN)
-        var matcher = pattern.matcher(str)
+        var matcher = pattern.matcher(str!!)
         return matcher.matches()
     }
     /**
