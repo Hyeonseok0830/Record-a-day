@@ -13,10 +13,12 @@ import com.example.record_a_day.adapter.TaskAdapter
 import com.example.record_a_day.data.TaskItem
 import com.example.record_a_day.databinding.TaskFragmentBinding
 import com.example.record_a_day.manager.UserDataManager
+import com.example.record_a_day.presenter.Contractor
+import com.example.record_a_day.presenter.TaskPresenter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.orhanobut.logger.Logger
 
-class TaskFragment : Fragment() {
+class TaskFragment : Fragment(), Contractor.TaskView {
     private var mBinding: TaskFragmentBinding? = null
     private val binding get() = mBinding!!
 
@@ -31,6 +33,13 @@ class TaskFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
 
     val firestore = FirebaseFirestore.getInstance()
+
+    private var presenter: TaskPresenter? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        presenter = TaskPresenter(this)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -56,7 +65,7 @@ class TaskFragment : Fragment() {
 
     private fun initFunctions() {
         binding.addTask.setOnClickListener {
-            if(binding.contentTask.text.isEmpty()){
+            if (binding.contentTask.text.isEmpty()) {
                 Toast.makeText(mContext, "할 일을 입력하세요", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }

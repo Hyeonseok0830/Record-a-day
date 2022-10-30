@@ -6,15 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.record_a_day.view.activity.LoginActivity
 import com.example.record_a_day.data.UserData
 import com.example.record_a_day.databinding.MyinfoFragmentBinding
 import com.example.record_a_day.manager.PreferenceManager
+import com.example.record_a_day.presenter.Contractor
+import com.example.record_a_day.presenter.MyInfoPresenter
+import com.example.record_a_day.view.activity.LoginActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.orhanobut.logger.Logger
 import java.util.*
 
-class MyInfoFragment : Fragment() {
+class MyInfoFragment : Fragment(), Contractor.MyInfoView {
 
     private var mBinding: MyinfoFragmentBinding? = null
     private val binding get() = mBinding!!
@@ -28,7 +30,11 @@ class MyInfoFragment : Fragment() {
     //firestore 객체
     val firestore = FirebaseFirestore.getInstance()
 
+    private var presenter: MyInfoPresenter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        presenter = MyInfoPresenter(this)
 
         super.onCreate(savedInstanceState)
     }

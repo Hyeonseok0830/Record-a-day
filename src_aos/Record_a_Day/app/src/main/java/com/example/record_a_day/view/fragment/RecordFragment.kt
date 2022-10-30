@@ -20,13 +20,15 @@ import com.example.record_a_day.adapter.RecordAdapter
 import com.example.record_a_day.data.RecordItem
 import com.example.record_a_day.databinding.RecordFragmentBinding
 import com.example.record_a_day.manager.UserDataManager
+import com.example.record_a_day.presenter.Contractor
+import com.example.record_a_day.presenter.RecordPresenter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.orhanobut.logger.Logger
 import io.reactivex.observers.DisposableObserver
 import java.text.SimpleDateFormat
 import java.util.*
 
-class RecordFragment : Fragment() {
+class RecordFragment : Fragment(), Contractor.RecordView {
 
     private var mBinding: RecordFragmentBinding? = null
     private val binding get() = mBinding!!
@@ -44,6 +46,12 @@ class RecordFragment : Fragment() {
 
     val firestore = FirebaseFirestore.getInstance()
 
+    private var presenter: RecordPresenter? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        presenter = RecordPresenter(this)
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
