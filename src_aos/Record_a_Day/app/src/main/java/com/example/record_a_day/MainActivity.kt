@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.example.record_a_day.databinding.ActivityMainBinding
-
 import com.example.record_a_day.manager.PreferenceManager
 import com.example.record_a_day.view.activity.LoginActivity
 import com.example.record_a_day.view.fragment.GoalFragment
@@ -19,7 +18,6 @@ import com.example.record_a_day.view.fragment.MyInfoFragment
 import com.example.record_a_day.view.fragment.RecordFragment
 import com.example.record_a_day.view.fragment.TaskFragment
 import com.orhanobut.logger.Logger
-import io.reactivex.Observable
 import io.reactivex.observers.DisposableObserver
 
 class MainActivity : AppCompatActivity() {
