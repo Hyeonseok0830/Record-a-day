@@ -16,10 +16,9 @@ import com.example.record_a_day.databinding.ActivityLoginBinding
 import com.example.record_a_day.manager.PreferenceManager
 import com.example.record_a_day.presenter.Contractor
 import com.example.record_a_day.presenter.LoginPresenter
-import com.google.firebase.firestore.FirebaseFirestore
 import com.orhanobut.logger.Logger
 
-class LoginActivity : AppCompatActivity(), Contractor.View {
+class LoginActivity : AppCompatActivity(), Contractor.LoginView {
 
     // 뷰 바인딩 변수
     private var mBinding: ActivityLoginBinding? = null
@@ -31,8 +30,6 @@ class LoginActivity : AppCompatActivity(), Contractor.View {
         const val USER_INFO_KEY = "user_info"
     }
 
-    //firestore 객체
-    val firestore = FirebaseFirestore.getInstance()
 
     private val TAG = "seok"
 
