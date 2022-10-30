@@ -13,18 +13,18 @@ import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
 
-class LoginPresenter(view: Contractor.View?) : Contractor.Presenter {
-    var view: Contractor.View? = null
+class LoginPresenter(view: Contractor.LoginView?) : Contractor.LoginPresenter {
+    var view: Contractor.LoginView? = null
     var loginModel: LoginModel? = null
     val firestore = FirebaseFirestore.getInstance()
+
     init {
         this.view = view
         loginModel = LoginModel(this)
     }
 
 
-
-    override fun login_btn(context: Context, inputId :String, inputPw:String, autoLogin:Boolean) {
+    override fun login_btn(context: Context, inputId: String, inputPw: String, autoLogin: Boolean) {
         firestore.collection("user")
             .whereEqualTo("id", inputId)
             .get()
@@ -34,17 +34,17 @@ class LoginPresenter(view: Contractor.View?) : Contractor.Presenter {
                         val id = document.data["id"]
                         val name = document.data["name"]
                         if (autoLogin) {
-                            loginModel?.setPreference(context,"Login","$name|$id")
+                            loginModel?.setPreference(context, "Login", "$name|$id")
                         } else {
-                            loginModel?.setPreference(context,"Login","")
+                            loginModel?.setPreference(context, "Login", "")
                         }
-                        loginModel?.setPreference(context,"User","$name|$id")
+                        loginModel?.setPreference(context, "User", "$name|$id")
                         if (!inputId.isNullOrEmpty()) {
                             //view?.loginResult()
                             var intent = Intent(context, MainActivity::class.java)
                             context.startActivity(intent)
                         } else {
-                            view?.loginResult("Login",true)
+                            view?.loginResult("Login", true)
                         }
                     } else {
                         Toast.makeText(
@@ -53,45 +53,44 @@ class LoginPresenter(view: Contractor.View?) : Contractor.Presenter {
                             Toast.LENGTH_LONG
                         ).show()
 
-                        view?.loginResult("Login",false)
+                        view?.loginResult("Login", false)
                     }
                 }
             }
             .addOnFailureListener { exception ->
-                view?.loginResult("Login",false)
+                view?.loginResult("Login", false)
                 Logger.w("Error getting documents:$exception")
             }
-            .addOnCompleteListener { it->
-                if(it.result!=null&&it.result?.isEmpty!!){
+            .addOnCompleteListener { it ->
+                if (it.result != null && it.result?.isEmpty!!) {
                     Toast.makeText(
                         context,
                         "존재하지 않는 아이디입니다.\n회원가입을 진행해 주세요.",
                         Toast.LENGTH_LONG
                     ).show()
-                    view?.loginResult("Login",false)
+                    view?.loginResult("Login", false)
                 }
             }
     }
 
-    override fun autoLogin(context: Context, inputId:String, autoLogin: Boolean) {
+    override fun autoLogin(context: Context, inputId: String, autoLogin: Boolean) {
 
         if (autoLogin) {
-            loginModel?.setPreference(context,"Login", inputId)
+            loginModel?.setPreference(context, "Login", inputId)
         } else {
-            loginModel?.setPreference(context,"Login", "")
+            loginModel?.setPreference(context, "Login", "")
         }
-        loginModel?.setPreference(context,"User", "현석|test")
+        loginModel?.setPreference(context, "User", "현석|test")
         var intent = Intent(context, MainActivity::class.java)
         context.startActivity(intent)
-        view?.loginResult("AutoLogin",true)
+        view?.loginResult("AutoLogin", true)
     }
-
 
 
     /**
      * ECB 암호화
      */
-    private fun String.encryptECB(): String{
+    private fun String.encryptECB(): String {
         val keySpec = SecretKeySpec(JoinActivity.SECRET_KEY.toByteArray(), "AES")    /// 키
         val cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING")     //싸이퍼
         cipher.init(Cipher.ENCRYPT_MODE, keySpec)       // 암호화/복호화 모드
