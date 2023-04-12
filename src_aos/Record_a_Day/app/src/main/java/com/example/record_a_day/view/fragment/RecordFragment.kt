@@ -37,7 +37,7 @@ class RecordFragment : Fragment(), Contractor.RecordView {
 
     private val TAG = "seok"
 
-    lateinit var recordAdapter: RecordAdapter
+    private lateinit var recordAdapter: RecordAdapter
     val datas = mutableListOf<RecordItem>()
 
 
@@ -179,17 +179,21 @@ class RecordFragment : Fragment(), Contractor.RecordView {
             .addOnSuccessListener { documents ->
                 Log.d(TAG, "initRecyclerView: select success")
                 datas.clear()
+                val calendar = Calendar.getInstance()
                 for (document in documents) {
+                    val dateSplit = document.data["date"].toString().split("/")
+                    calendar.set(dateSplit[0].toInt(),dateSplit[1].toInt(),dateSplit[2].toInt(),0,0,0)
                     datas.apply {
                         add(
                             RecordItem(
                                 document.data["title"].toString(),
                                 document.data["date"].toString(),
-                                document.data["weather"].toString()
+                                document.data["weather"].toString(),
+                                calendar.timeInMillis
                             )
                         )
                     }
-
+                    datas.sortByDescending {it.compareDate}
                 }
 //                val source = Observable.create<MutableList<RecordItem>> {
 //                    it.onNext(datas)

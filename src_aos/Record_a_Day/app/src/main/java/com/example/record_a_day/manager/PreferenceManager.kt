@@ -2,6 +2,7 @@ package com.example.record_a_day.manager
 
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 
 
 /**
@@ -32,9 +33,7 @@ object PreferenceManager {
      */
     fun setString(context: Context, key: String?, value: String?) {
         val prefs = getPreferences(context)
-        val editor = prefs.edit()
-        editor.putString(key, value)
-        editor.commit()
+        prefs.edit(commit = true) { putString(key, value) }
     }
 
     /**
@@ -49,9 +48,7 @@ object PreferenceManager {
      */
     fun setBoolean(context: Context, key: String?, value: Boolean) {
         val prefs = getPreferences(context)
-        val editor = prefs.edit()
-        editor.putBoolean(key, value)
-        editor.commit()
+        prefs.edit(commit = true) { putBoolean(key, value) }
     }
 
     /**
@@ -66,9 +63,7 @@ object PreferenceManager {
      */
     fun setInt(context: Context, key: String?, value: Int) {
         val prefs = getPreferences(context)
-        val editor = prefs.edit()
-        editor.putInt(key, value)
-        editor.commit()
+        prefs.edit(commit = true) { putInt(key, value) }
     }
 
     /**
@@ -83,9 +78,7 @@ object PreferenceManager {
      */
     fun setLong(context: Context, key: String?, value: Long) {
         val prefs = getPreferences(context)
-        val editor = prefs.edit()
-        editor.putLong(key, value)
-        editor.commit()
+        prefs.edit(commit = true) { putLong(key, value) }
     }
 
     /**
@@ -100,9 +93,7 @@ object PreferenceManager {
      */
     fun setFloat(context: Context, key: String?, value: Float) {
         val prefs = getPreferences(context)
-        val editor = prefs.edit()
-        editor.putFloat(key, value)
-        editor.commit()
+        prefs.edit(commit = true) { putFloat(key, value) }
     }
 
     /**
