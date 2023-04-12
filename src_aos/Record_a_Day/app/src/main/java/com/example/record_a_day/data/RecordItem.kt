@@ -9,5 +9,7 @@ data class RecordItem (
     @SerializedName("DATE")
     val date:String,
     @SerializedName("WEATHER")
-    val weather:String
+    val weather:String,
+    @SerializedName("COMPAREDATE")
+    val compareDate:Long
     )
