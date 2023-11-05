@@ -2,10 +2,13 @@ package com.example.record_a_day.view.fragment
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.record_a_day.data.RecordItem
+import com.example.record_a_day.data.TaskItem
 import com.example.record_a_day.data.UserData
 import com.example.record_a_day.databinding.MyinfoFragmentBinding
 import com.example.record_a_day.manager.PreferenceManager
@@ -13,6 +16,7 @@ import com.example.record_a_day.presenter.Contractor
 import com.example.record_a_day.presenter.MyInfoPresenter
 import com.example.record_a_day.view.activity.LoginActivity
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.orhanobut.logger.Logger
 import java.util.*
 
@@ -23,10 +27,6 @@ class MyInfoFragment : Fragment(), Contractor.MyInfoView {
 
     private val TAG = "seok"
 
-
-    lateinit var user_info: String
-    lateinit var user_data: UserData
-
     //firestore 객체
     val firestore = FirebaseFirestore.getInstance()
 
@@ -34,7 +34,7 @@ class MyInfoFragment : Fragment(), Contractor.MyInfoView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        presenter = MyInfoPresenter(this)
+        presenter = activity?.let { MyInfoPresenter(it.applicationContext ,this) }
 
         super.onCreate(savedInstanceState)
     }
@@ -45,27 +45,18 @@ class MyInfoFragment : Fragment(), Contractor.MyInfoView {
         savedInstanceState: Bundle?
     ): View {
         mBinding = MyinfoFragmentBinding.inflate(inflater, container, false)
-        user_info = activity?.let {
-            PreferenceManager.getString(it.applicationContext, LoginActivity.USER_INFO_KEY)
-        }.toString()
-        Logger.i("onCreateView: $user_info")
 
-        val list = arrayListOf<String>()
-        StringTokenizer(user_info, "|").apply {
-            while (hasMoreTokens()) {
-                list.add(nextToken())
-            }
-        }
-        user_data = UserData(list[0], list[1], "", "", "")
-
-
-        firestore.collection("record")
-            .whereEqualTo("id", user_data.id)
-            .get()
-            .addOnSuccessListener { documents ->
-                "${documents.size()} 회".also { binding.recordCount.text = it }
+        presenter?.getRecordCount()
+        presenter?.getTaskState()
+        presenter?.setEventListener(object : MyInfoPresenter.EventListener{
+            override fun recordCount(recordCount: Int) {
+                binding.recordCount.text = recordCount.toString()
             }
 
+            override fun taskState(taskState: String) {
+                binding.todoCount.text = taskState
+            }
+        })
 
         return binding.root
     }
