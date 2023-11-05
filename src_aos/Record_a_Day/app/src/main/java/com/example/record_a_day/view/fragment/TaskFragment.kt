@@ -124,10 +124,6 @@ class TaskFragment : Fragment(), Contractor.TaskView {
                                 }
                             }
                         }
-
-
-
-
                     }
                 })
                 if (!taskAdapter.datas.isEmpty())

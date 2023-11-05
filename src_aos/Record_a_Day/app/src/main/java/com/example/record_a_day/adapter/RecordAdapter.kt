@@ -1,9 +1,13 @@
 package com.example.record_a_day.adapter
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuInflater
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
@@ -16,8 +20,13 @@ class RecordAdapter() : RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
 
     private val TAG = "seok"
     var datas = mutableListOf<RecordItem>()
-
-
+    interface ItemListener {
+        fun onItemDelete(recordItem: RecordItem?, title: String?)
+    }
+    private lateinit var mListener: RecordAdapter.ItemListener
+    fun setListener(listener: ItemListener) {
+        mListener = listener
+    }
     inner class ViewHolder(private val binding: ItemRecordRecyclerBinding) : RecyclerView.ViewHolder(binding.root) {
         private val recordTitle = itemView.findViewById<TextView>(R.id.record_title)
         private val recordDate = itemView.findViewById<TextView>(R.id.record_date)
@@ -38,6 +47,34 @@ class RecordAdapter() : RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
                 else -> R.drawable.clear
             }
             recordWeather.load(weatherImg)
+
+
+            itemView.setOnClickListener {
+                AlertDialog.Builder(itemView.context)
+                    .setTitle(datas[position].title)
+                    .setMessage(datas[position].content)
+                    .setPositiveButton("닫기",
+                        DialogInterface.OnClickListener { dialog, which -> dialog.dismiss()})
+                    .create()
+                    .show()
+            }
+            itemView.setOnLongClickListener {
+                val popupMenu = PopupMenu(itemView.context, it)
+                popupMenu.menuInflater.inflate(R.menu.record_item_menu, popupMenu.menu)
+                popupMenu.setOnMenuItemClickListener {
+                    when(it.itemId) {
+                        R.id.record_delete -> {
+                            if(mListener!=null) {
+                                mListener.onItemDelete(recordItem = item, title = recordTitle.text.toString())
+                            }
+                        } else -> {
+                        }
+                    }
+                    true
+                }
+                popupMenu.show()
+                true
+            }
         }
     }
 
@@ -47,8 +84,11 @@ class RecordAdapter() : RecyclerView.Adapter<RecordAdapter.ViewHolder>(){
     }
 
     override fun onBindViewHolder(holder: RecordAdapter.ViewHolder, position: Int) {
-        Logger.d("onBindViewHolder: ${datas[position].title}")
         Log.d(TAG, "onBindViewHolder: ${datas[position].title}")
+
+
+
+
         holder.bind(datas[position])
     }
 
