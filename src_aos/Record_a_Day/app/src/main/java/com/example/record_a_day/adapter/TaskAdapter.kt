@@ -17,7 +17,7 @@ class TaskAdapter() : RecyclerView.Adapter<TaskAdapter.ViewHolder>(){
     var datas = mutableListOf<TaskItem>()
 
     interface ItemListener {
-        fun onItemClick(view: View?, content: String, check: Boolean)
+        fun onItemClick(taskItem: TaskItem?, content: String, check: Boolean)
     }
 
     private lateinit var mListener: ItemListener
@@ -34,7 +34,7 @@ class TaskAdapter() : RecyclerView.Adapter<TaskAdapter.ViewHolder>(){
             taskCheck.isChecked = item.check
             taskContent.text = item.content.toString()
             taskCheck.setOnCheckedChangeListener { _item, _isChecked ->
-                mListener.onItemClick(_item,taskContent.text.toString(),_isChecked)
+                mListener.onItemClick(item, taskContent.text.toString(), _isChecked)
             }
         }
     }
