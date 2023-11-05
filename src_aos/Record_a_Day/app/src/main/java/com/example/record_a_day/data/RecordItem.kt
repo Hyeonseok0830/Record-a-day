@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName
 data class RecordItem (
     @SerializedName("TITLE")
     var title: String,
+    @SerializedName("CONTENT")
+    var content: String,
     @SerializedName("DATE")
     val date:String,
     @SerializedName("WEATHER")
