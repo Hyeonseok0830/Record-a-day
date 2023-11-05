@@ -18,11 +18,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.record_a_day.R
 import com.example.record_a_day.adapter.RecordAdapter
 import com.example.record_a_day.data.RecordItem
+import com.example.record_a_day.data.TaskItem
 import com.example.record_a_day.databinding.RecordFragmentBinding
 import com.example.record_a_day.manager.UserDataManager
 import com.example.record_a_day.presenter.Contractor
 import com.example.record_a_day.presenter.RecordPresenter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.orhanobut.logger.Logger
 import io.reactivex.observers.DisposableObserver
 import java.text.SimpleDateFormat
@@ -187,6 +189,7 @@ class RecordFragment : Fragment(), Contractor.RecordView {
                         add(
                             RecordItem(
                                 document.data["title"].toString(),
+                                document.data["content"].toString(),
                                 document.data["date"].toString(),
                                 document.data["weather"].toString(),
                                 calendar.timeInMillis
@@ -202,6 +205,23 @@ class RecordFragment : Fragment(), Contractor.RecordView {
 //                source.subscribe(mObserver)
 
                 recordAdapter = RecordAdapter()
+                recordAdapter.setListener(object : RecordAdapter.ItemListener {
+                    override fun onItemDelete(recordItem: RecordItem?, title: String?) {
+                        for (document in documents) {
+                            if(title.equals(document.data["title"].toString())){
+                                if(recordItem!=null) {
+                                    datas.apply {
+                                        remove(recordItem)
+                                    }
+                                    firestore.collection("record")
+                                        .document(document.id).delete()
+                                    recordAdapter.run { notifyDataSetChanged() }
+                                }
+                            }
+                        }
+                    }
+
+                })
                 if (!recordAdapter.datas.isEmpty())
                     recordAdapter.datas.clear()
                 recordAdapter.datas = datas
