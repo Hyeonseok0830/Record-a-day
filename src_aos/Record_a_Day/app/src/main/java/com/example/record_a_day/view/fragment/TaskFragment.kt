@@ -16,6 +16,7 @@ import com.example.record_a_day.manager.UserDataManager
 import com.example.record_a_day.presenter.Contractor
 import com.example.record_a_day.presenter.TaskPresenter
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.orhanobut.logger.Logger
 
 class TaskFragment : Fragment(), Contractor.TaskView {
@@ -108,8 +109,25 @@ class TaskFragment : Fragment(), Contractor.TaskView {
                 Logger.d("datas size ${datas.size}")
                 taskAdapter = TaskAdapter()
                 taskAdapter.setListener(object : TaskAdapter.ItemListener {
-                    override fun onItemClick(view: View?, content: String, check: Boolean) {
-                        TODO("check 상태 업데이트 로직 추가 필요")
+                    override fun onItemClick(taskItem: TaskItem?, content: String, check: Boolean) {
+                        for (document in documents) {
+                            if(content.equals(document.data["content"].toString())){
+                                if(taskItem!=null) {
+                                    taskItem.check = !taskItem.check
+                                    val item = TaskItem(
+                                        taskItem.check,
+                                        taskItem.content
+                                    )
+                                    firestore.collection("task")
+                                        .document(document.id).set(item, SetOptions.merge())
+                                    taskAdapter.run { notifyDataSetChanged() }
+                                }
+                            }
+                        }
+
+
+
+
                     }
                 })
                 if (!taskAdapter.datas.isEmpty())
