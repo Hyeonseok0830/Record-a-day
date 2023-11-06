@@ -26,29 +26,32 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/divider"
         android:orientation="horizontal">
+
         <EditText
             android:id="@+id/search_record"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:textSize="12sp"
             android:layout_weight="1"
-            android:hint="키워드를 검색하세요" />
+            android:hint="키워드를 검색하세요"
+            android:maxLines="1"
+            android:textSize="12sp" />
+
         <Button
             android:id="@+id/recordDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
             android:layout_weight="1"
             android:text="기록하기"
-            android:textStyle="bold"
-            android:layout_marginHorizontal="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textStyle="bold" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="80dp"
-        android:layout_below="@id/functionBtn" />
+        android:layout_below="@id/functionBtn"
+        android:layout_marginBottom="80dp" />
 
 </RelativeLayout>

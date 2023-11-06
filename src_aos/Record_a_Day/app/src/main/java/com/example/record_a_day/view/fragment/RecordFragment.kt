@@ -2,7 +2,8 @@ package com.example.record_a_day.view.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -14,21 +15,15 @@ import android.widget.Spinner
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.record_a_day.R
 import com.example.record_a_day.adapter.RecordAdapter
-import com.example.record_a_day.data.RecordItem
-import com.example.record_a_day.data.TaskItem
 import com.example.record_a_day.databinding.RecordFragmentBinding
 import com.example.record_a_day.manager.UserDataManager
 import com.example.record_a_day.presenter.Contractor
 import com.example.record_a_day.presenter.RecordPresenter
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
 import com.orhanobut.logger.Logger
-import io.reactivex.observers.DisposableObserver
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
 
 class RecordFragment : Fragment(), Contractor.RecordView {
 
@@ -39,20 +34,13 @@ class RecordFragment : Fragment(), Contractor.RecordView {
 
     private val TAG = "seok"
 
-    private lateinit var recordAdapter: RecordAdapter
-    val datas = mutableListOf<RecordItem>()
-
-
     private var search_keyword: String? = null
-    private var recyclerView: RecyclerView? = null
-
-    val firestore = FirebaseFirestore.getInstance()
 
     private var presenter: RecordPresenter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = RecordPresenter(this)
+        presenter = activity?.let { RecordPresenter(it.applicationContext, this) }
     }
 
     override fun onAttach(context: Context) {
@@ -67,41 +55,57 @@ class RecordFragment : Fragment(), Contractor.RecordView {
         savedInstanceState: Bundle?
     ): View? {
         mBinding = RecordFragmentBinding.inflate(inflater, container, false)
-
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initFunctions()
-        initRecyclerView()
+        initDialog()
+
+        presenter?.setEventListener(object : RecordPresenter.EventListener {
+            override fun refreshadapter(recordAdapter: RecordAdapter) {
+                binding.recyclerView.adapter = recordAdapter
+                binding.recyclerView.layoutManager = LinearLayoutManager(mContext!!)
+                recordAdapter.let { recordAdapter?.notifyDataSetChanged() }
+            }
+        })
+        presenter?.initRecyclerView()
+
+        binding.searchRecord.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                presenter?.filterItem(s.toString())
+            }
+
+            override fun afterTextChanged(arg0: Editable?) {
+
+            }
+        })
 
     }
 
-    private fun initFunctions() {
+    private fun initDialog() {
         binding.recordDay.setOnClickListener {
             val weatherData = resources.getStringArray(R.array.weather_array)
-//            val weatherData = arrayOf(
-//                R.drawable.clear,
-//                R.drawable.cloudy,
-//                R.drawable.cold,
-//                R.drawable.partly_sunny,
-//                R.drawable.raining,
-//                R.drawable.snowing
-//            )
-            val myAdapter = object : ArrayAdapter<String>(mContext!!, R.layout.weather_item_spinner) {
-                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                    val v = super.getView(position, convertView, parent)
-                    return v
-                }
+            val myAdapter =
+                object : ArrayAdapter<String>(mContext!!, R.layout.weather_item_spinner) {
+                    override fun getView(
+                        position: Int,
+                        convertView: View?,
+                        parent: ViewGroup
+                    ): View {
+                        val v = super.getView(position, convertView, parent)
+                        return v
+                    }
 
-                override fun getCount(): Int {
-                    return super.getCount() - 1
+                    override fun getCount(): Int {
+                        return super.getCount() - 1
+                    }
                 }
-
-            }
             myAdapter.addAll(weatherData.toMutableList())
             //힌트로 사용할 문구를 마지막 아이템에 추가해 줍니다.
             myAdapter.add("날씨를 선택해주세요.")
@@ -119,8 +123,12 @@ class RecordFragment : Fragment(), Contractor.RecordView {
 
             //스피너 선택시 나오는 화면 입니다.
             spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View,
+                    position: Int,
+                    id: Long
+                ) {
                     //아이템이 클릭 되면 맨 위부터 position 0번부터 순서대로 동작하게 됩니다.
                     dialogWeather = when (position) {
                         0 -> "clear"
@@ -150,16 +158,7 @@ class RecordFragment : Fragment(), Contractor.RecordView {
                         "weather" to dialogWeather.toString(),
                         "date" to recordDate.toString()
                     )
-                    firestore.collection("record")
-                        .add(recordData)
-                        .addOnSuccessListener {
-                            Logger.d("onCreate: Success add record info")
-                            initRecyclerView()
-                        }
-                        .addOnFailureListener {
-                            Logger.d("onCreate: Fail add record info")
-
-                        }
+                    presenter?.addRecord(recordData)
                     dialogInterface.dismiss()
                 }
                 .setNegativeButton("취소") { dialogInterface, i ->
@@ -167,94 +166,6 @@ class RecordFragment : Fragment(), Contractor.RecordView {
                     dialogInterface.dismiss()
                 }
                 .show()
-        }
-
-    }
-
-
-    private fun initRecyclerView() {
-        Logger.d("initRecyclerView: ${UserDataManager.getInstance(mContext!!).id}")
-
-        firestore.collection("record")
-            .whereEqualTo("id", UserDataManager.getInstance(mContext!!).id)
-            .get()
-            .addOnSuccessListener { documents ->
-                Log.d(TAG, "initRecyclerView: select success")
-                datas.clear()
-                val calendar = Calendar.getInstance()
-                for (document in documents) {
-                    val dateSplit = document.data["date"].toString().split("/")
-                    calendar.set(dateSplit[0].toInt(),dateSplit[1].toInt(),dateSplit[2].toInt(),0,0,0)
-                    datas.apply {
-                        add(
-                            RecordItem(
-                                document.data["title"].toString(),
-                                document.data["content"].toString(),
-                                document.data["date"].toString(),
-                                document.data["weather"].toString(),
-                                calendar.timeInMillis
-                            )
-                        )
-                    }
-                    datas.sortByDescending {it.compareDate}
-                }
-//                val source = Observable.create<MutableList<RecordItem>> {
-//                    it.onNext(datas)
-//                    it.onComplete()
-//                }
-//                source.subscribe(mObserver)
-
-                recordAdapter = RecordAdapter()
-                recordAdapter.setListener(object : RecordAdapter.ItemListener {
-                    override fun onItemDelete(recordItem: RecordItem?, title: String?) {
-                        for (document in documents) {
-                            if(title.equals(document.data["title"].toString())){
-                                if(recordItem!=null) {
-                                    datas.apply {
-                                        remove(recordItem)
-                                    }
-                                    firestore.collection("record")
-                                        .document(document.id).delete()
-                                    recordAdapter.run { notifyDataSetChanged() }
-                                }
-                            }
-                        }
-                    }
-
-                })
-                if (!recordAdapter.datas.isEmpty())
-                    recordAdapter.datas.clear()
-                recordAdapter.datas = datas
-                binding.recyclerView.adapter = recordAdapter
-                binding.recyclerView.layoutManager = LinearLayoutManager(mContext!!)
-                recordAdapter.notifyDataSetChanged()
-            }.addOnFailureListener {
-                Logger.e("initRecyclerView: error! ")
-            }
-
-//        Log.i(TAG, "initRecyclerView: ${datas[0].title}")
-//        Log.i(TAG, "initRecyclerView: ${datas[0].date}")
-//        Log.i(TAG, "initRecyclerView: ${datas[0].weather}")
-
-    }
-
-    var mObserver = object : DisposableObserver<MutableList<RecordItem>>() {
-        override fun onNext(datas: MutableList<RecordItem>) {
-            for (data in datas) {
-//                Log.d(TAG, "onNext: ${data.title}")
-//                Log.d(TAG, "onNext: ${data.date}")
-//                Log.d(TAG, "onNext: ${data.weather}")
-            }
-
-        }
-
-        override fun onError(e: Throwable) {
-            e.printStackTrace()
-        }
-
-        override fun onComplete() {
-            Logger.i("onComplete")
-
         }
 
     }
