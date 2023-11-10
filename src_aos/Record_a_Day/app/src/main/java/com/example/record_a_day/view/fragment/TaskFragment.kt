@@ -10,14 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.record_a_day.adapter.TaskAdapter
-import com.example.record_a_day.data.TaskItem
 import com.example.record_a_day.databinding.TaskFragmentBinding
-import com.example.record_a_day.manager.UserDataManager
 import com.example.record_a_day.presenter.Contractor
 import com.example.record_a_day.presenter.TaskPresenter
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
-import com.orhanobut.logger.Logger
 
 class TaskFragment : Fragment(), Contractor.TaskView {
     private var mBinding: TaskFragmentBinding? = null
@@ -26,9 +22,6 @@ class TaskFragment : Fragment(), Contractor.TaskView {
     var mContext: Context? = null
 
     private val TAG = "seok"
-
-    lateinit var taskAdapter: TaskAdapter
-    val datas = mutableListOf<TaskItem>()
 
 
     private var recyclerView: RecyclerView? = null
@@ -39,7 +32,7 @@ class TaskFragment : Fragment(), Contractor.TaskView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter = TaskPresenter(this)
+        presenter = activity?.let { TaskPresenter(it.applicationContext, this) }
     }
 
     override fun onAttach(context: Context) {
@@ -60,7 +53,15 @@ class TaskFragment : Fragment(), Contractor.TaskView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initFunctions()
-        initRecyclerView()
+        presenter?.setEventListener(object: TaskPresenter.EventListener{
+            override fun refreshadapter(taskAdapter: TaskAdapter) {
+                binding.recyclerView.adapter = taskAdapter
+                binding.recyclerView.layoutManager = LinearLayoutManager(mContext!!)
+                taskAdapter.notifyDataSetChanged()
+            }
+
+        })
+        presenter?.initRecyclerView()
 
     }
 
@@ -70,72 +71,10 @@ class TaskFragment : Fragment(), Contractor.TaskView {
                 Toast.makeText(mContext, "할 일을 입력하세요", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            var taskData = mutableMapOf(
-                "id" to UserDataManager.getInstance(mContext!!).id,
-                "check" to false,
-                "content" to binding.contentTask.text.toString()
-            )
-            firestore.collection("task")
-                .add(taskData)
-                .addOnSuccessListener {
-                    Logger.d("onCreate: Success add record info")
-                    initRecyclerView()
-                }
-                .addOnFailureListener {
-                    Logger.d("onCreate: Fail add record info")
-                }
+
+            presenter?.addTask(binding.contentTask.text.toString())
             binding.contentTask.text.clear()
         }
-    }
-
-    private fun initRecyclerView() {
-        Logger.d("initRecyclerView: ${UserDataManager.getInstance(mContext!!).id}")
-        firestore.collection("task")
-            .whereEqualTo("id", UserDataManager.getInstance(mContext!!).id)
-            .get()
-            .addOnSuccessListener { documents ->
-                Logger.d("initRecyclerView: select success")
-                datas.clear()
-                for (document in documents) {
-                    datas.apply {
-                        add(
-                            TaskItem(
-                                document.data["check"] as Boolean,
-                                document.data["content"].toString()
-                            )
-                        )
-                    }
-                }
-                Logger.d("datas size ${datas.size}")
-                taskAdapter = TaskAdapter()
-                taskAdapter.setListener(object : TaskAdapter.ItemListener {
-                    override fun onItemClick(taskItem: TaskItem?, content: String, check: Boolean) {
-                        for (document in documents) {
-                            if(content.equals(document.data["content"].toString())){
-                                if(taskItem!=null) {
-                                    taskItem.check = !taskItem.check
-                                    val item = TaskItem(
-                                        taskItem.check,
-                                        taskItem.content
-                                    )
-                                    firestore.collection("task")
-                                        .document(document.id).set(item, SetOptions.merge())
-                                    taskAdapter.run { notifyDataSetChanged() }
-                                }
-                            }
-                        }
-                    }
-                })
-                if (!taskAdapter.datas.isEmpty())
-                    taskAdapter.datas.clear()
-                taskAdapter.datas = datas
-                binding.recyclerView.adapter = taskAdapter
-                binding.recyclerView.layoutManager = LinearLayoutManager(mContext!!)
-                taskAdapter.notifyDataSetChanged()
-            }.addOnFailureListener {
-                Logger.e("initRecyclerView: error! ")
-            }
-
     }
 
 }
