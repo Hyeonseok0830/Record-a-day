@@ -2,11 +2,11 @@ package com.example.record_a_day.view.activity
 
 
 
-import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Base64
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
@@ -15,11 +15,13 @@ import com.example.record_a_day.databinding.ActivityJoinBinding
 import com.example.record_a_day.util.SoftKeyboardDectectorView
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
-import com.google.firebase.auth.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.PhoneAuthCredential
+import com.google.firebase.auth.PhoneAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.orhanobut.logger.Logger
-import java.util.*
-import java.util.concurrent.TimeUnit
+import java.util.Timer
 import java.util.regex.Pattern
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
@@ -51,6 +53,7 @@ class JoinActivity : AppCompatActivity() {
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
+                Toast.makeText(applicationContext,"인증된 앱이 아닙니다. 테스트 번호를 사용해 주세요\n번호 : 010-1111-1111, 인증 번호 : 111111",Toast.LENGTH_LONG).show()
                 Logger.e("onVerificationFailed:$e")
 
                 if (e is FirebaseAuthInvalidCredentialsException) {
@@ -64,7 +67,7 @@ class JoinActivity : AppCompatActivity() {
                 //super.onCodeSent(verificationId, token)
                 storedVerificationId = verificationId
                 resendToken = token
-                //Log.d(TAG,"verificationId = "+verificationId+", resendToken = "+token.toString())
+                Log.d(TAG,"verificationId = "+verificationId+", resendToken = "+token.toString())
             }
 
         }
@@ -171,68 +174,12 @@ class JoinActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.ctnPassBtn.isEnabled = s?.length!! >=11
+                binding.joinBtn.isEnabled = s?.length!! >=11
             }
             override fun afterTextChanged(s: Editable?) {
             }
         })
-        //인증 번호 6자리 입력 시 회원가입 버튼 활성화
-        binding.ctnResult.addTextChangedListener(object : TextWatcher{
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//                binding.joinBtn.isEnabled = s?.length!! >=6
-            }
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
-        //인증 번호 전송 버튼
-        binding.ctnPassBtn.setOnClickListener {
-            binding.authTimer.visibility = View.VISIBLE
-            var time = 60
-            //인증번호 전송
-            val ctn = binding.ctnInput.text.toString()
-            val options = PhoneAuthOptions.newBuilder(auth)
-                .setPhoneNumber("+82$ctn")       // Phone number to verify
-                .setTimeout(60L, TimeUnit.SECONDS) // Timeout and unit
-                .setActivity(this)                 // Activity (for callback binding)
-                .setCallbacks(callbacks)          // OnVerificationStateChangedCallbacks
-                .build()
-            PhoneAuthProvider.verifyPhoneNumber(options)
-            if(timerTask!=null){
-                timerTask?.cancel()
-            }
-            timerTask = kotlin.concurrent.timer(period = 1000) {
-                time--
-                val sec = time
 
-                runOnUiThread {
-                    if(sec<15){
-                        binding.authTimer.setTextColor(Color.parseColor("#FF0000"))
-                    }
-                    if(sec<10){
-                        binding.authTimer.text = "00:0$sec"
-                    }else {
-                        binding.authTimer.text = "00:$sec"
-                    }
-                }
-                if(time<=0){
-                    runOnUiThread {
-                        timerTask?.cancel()
-                        binding.authTimer.text = "00:60"
-                        binding.authTimer.setTextColor(Color.parseColor("#FF000000"))
-                        binding.authTimer.visibility = View.GONE
-                    }
-                }
-            }
-            binding.ctnAuthLayout.visibility = View.VISIBLE
-            Toast.makeText(this,"인증번호를 전송하였습니다.",Toast.LENGTH_LONG).show()
-        }
-        //인증하기 버튼
-        binding.ctnPassAuthBtn.setOnClickListener {
-            val credential = PhoneAuthProvider.getCredential(storedVerificationId!!, binding.ctnResult.text.toString())
-            signInWithPhoneAuthCredential(credential)
-        }
         //회원 가입 버튼
         binding.joinBtn.setOnClickListener {
             val encrypt_pass = binding.joinPw.text.toString().encryptECB()
@@ -246,9 +193,11 @@ class JoinActivity : AppCompatActivity() {
             firestore.collection("user")
                 .add(user)
                 .addOnSuccessListener {
+                    Toast.makeText(this,"회원가입이 완료되었습니다.",Toast.LENGTH_LONG).show()
                     Logger.d("onCreate: Success add user info")
                 }
                 .addOnFailureListener {
+                    Toast.makeText(this,"알 수 없는 이유로 회원가입에 실패하였습니다.",Toast.LENGTH_LONG).show()
                     Logger.d("onCreate: Fail add user info")
                 }
             finish()
@@ -280,24 +229,24 @@ class JoinActivity : AppCompatActivity() {
         val encodedByte = Base64.encode(ciphertext, Base64.DEFAULT)
         return String(encodedByte)
     }
-    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
-                    Logger.d("signInWithCredential:success")
-                    Toast.makeText(this,"인증 완료",Toast.LENGTH_LONG).show()
-                    binding.joinBtn.isEnabled = true
-                    timerTask?.cancel()
-                } else {
-                    // Sign in failed, display a message and update the UI
-                    Logger.d("signInWithCredential:failure  ${task.exception}")
-                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        // The verification code entered was invalid
-                    }
-                    Toast.makeText(this,"인증에 실패하였습니다. 다시 시도해주세요.",Toast.LENGTH_LONG).show()
-                    // Update UI
-                }
-            }
-    }
+//    private fun signInWithPhoneAuthCredential(credential: PhoneAuthCredential) {
+//        auth.signInWithCredential(credential)
+//            .addOnCompleteListener(this) { task ->
+//                if (task.isSuccessful) {
+//                    // Sign in success, update UI with the signed-in user's information
+//                    Logger.d("signInWithCredential:success")
+//                    Toast.makeText(this,"인증 완료",Toast.LENGTH_LONG).show()
+//                    binding.joinBtn.isEnabled = true
+//                    timerTask?.cancel()
+//                } else {
+//                    // Sign in failed, display a message and update the UI
+//                    Logger.d("signInWithCredential:failure  ${task.exception}")
+//                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+//                        // The verification code entered was invalid
+//                    }
+//                    Toast.makeText(this,"인증에 실패하였습니다. 다시 시도해주세요.",Toast.LENGTH_LONG).show()
+//                    // Update UI
+//                }
+//            }
+//    }
 }
